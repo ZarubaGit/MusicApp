@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/YP_White"
+    android:orientation="vertical"
+    android:padding="15dp">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/imageButton"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/YP_White"
+            android:importantForAccessibility="no"
+            app:srcCompat="@drawable/light_mode"
+            android:foreground="?attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="186dp"
+            android:fontFamily="@font/ys_display_medium"
+
+            android:text="@string/name_setting"
+            android:textColor="@color/YP_Black"
+            android:textSize="@dimen/text_size" />
+    </FrameLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="61dp"
+            android:layout_marginTop="28dp"
+            android:layout_gravity="start"
+            android:fontFamily="@font/ys_display_medium"
+            android:gravity="center_vertical"
+            android:text="@string/night_theme"
+            android:textColor="@color/YP_Black"
+            android:textSize="16sp" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="-65dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_marginTop="28dp"
+        android:layout_gravity="start"
+        android:fontFamily="@font/ys_display_medium"
+        android:gravity="center_vertical"
+        android:text="@string/share_option"
+        android:textColor="@color/YP_Black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+
+        android:layout_marginTop="-41dp"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_share_24"
+        app:tint="@color/YP_Text_Gray" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_marginTop="28dp"
+        android:layout_gravity="start"
+        android:fontFamily="@font/ys_display_medium"
+        android:gravity="center_vertical"
+        android:text="@string/write_in_tudasyda"
+        android:textColor="@color/YP_Black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="-41dp"
+        android:src="@drawable/group"
+        app:tint="@color/YP_Text_Gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_marginTop="28dp"
+        android:layout_gravity="start"
+        android:fontFamily="@font/ys_display_medium"
+        android:gravity="center_vertical"
+        android:text="@string/user_accepted"
+        android:textColor="@color/YP_Black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="-41dp"
+        android:src="@drawable/galochka"
+        app:tint="@color/YP_Text_Gray" />
+
+</LinearLayout>
