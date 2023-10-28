@@ -38,7 +38,7 @@
             app:cornerRadius="@dimen/buttonCorner"
             app:icon="@drawable/vector"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
+            app:iconPadding="@dimen/icon_onMain_Activity"
             app:iconTint="@color/YP_Black"
             android:foreground="?attr/selectableItemBackground"
             android:layout_height="0dp"/>
@@ -59,7 +59,7 @@
             app:cornerRadius="@dimen/buttonCorner"
             app:icon="@drawable/mediateka"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
+            app:iconPadding="@dimen/icon_onMain_Activity"
             app:iconTint="@color/YP_Black"
             android:foreground="?attr/selectableItemBackground"/>
 
@@ -79,7 +79,7 @@
             app:cornerRadius="@dimen/buttonCorner"
             app:icon="@drawable/group2"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
+            app:iconPadding="@dimen/icon_onMain_Activity"
             app:iconTint="@color/YP_Black"
             android:foreground="?attr/selectableItemBackground"/>
 

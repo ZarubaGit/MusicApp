@@ -7,5 +7,6 @@
     <dimen name="iconSize">24dp</dimen>
     <dimen name="spaceFromStartFrameLayout">16dp</dimen>
     <dimen name="text_size_setting">16sp</dimen>
-    <dimen name="frame_setting_height">61sp</dimen>
+    <dimen name="frame_setting_height">64dp</dimen>
+    <dimen name="icon_onMain_Activity">8dp</dimen>
 </resources>
