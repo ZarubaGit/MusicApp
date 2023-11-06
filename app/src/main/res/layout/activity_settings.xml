@@ -2,59 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/YP_White"
-    android:orientation="vertical"
-    android:padding="15dp">
+    style="@style/StyleFromBackgroundSettingActivity">
 
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/YP_White"
-        android:orientation="horizontal">
+        style="@style/ToolBarSetting">
 
 
         <ImageView
+
+            style="@style/StrelochkaBack"
             android:id="@+id/backInMain"
-            android:layout_width="@dimen/iconSize"
-            android:layout_height="@dimen/iconSize"
-            android:layout_gravity="center"
-            android:layout_marginStart="4dp"
-            android:background="@color/YP_White"
-            android:foreground="?attr/selectableItemBackground"
-            android:importantForAccessibility="no"
             app:srcCompat="@drawable/light_mode" />
 
         <TextView
+            style="@style/TextFromToolBar"
             android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:fontFamily="@font/ys_display_medium"
-            android:gravity="center"
-
-            android:text="@string/name_setting"
-            android:textColor="@color/YP_Black"
-            android:textSize="@dimen/text_size" />
+            android:text="@string/name_setting"/>
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/frame_setting_height"
-        android:orientation="vertical"
-        android:background="@color/YP_White"
+        style="@style/FrameForSettingActivity"
         android:layout_marginTop="24dp">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spaceFromStartFrameLayout"
-            android:layout_gravity="center_vertical"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/night_theme"
-            android:textColor="@color/YP_Black"
-            android:textSize="@dimen/text_size_setting" />
+            style="@style/TextStyleForSetting"
+            android:text="@string/night_theme"/>
 
 
         <Switch
@@ -68,72 +40,37 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/frame_setting_height"
-        android:orientation="vertical"
-        android:background="@color/YP_White">
+        style="@style/FrameForSettingActivity">
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spaceFromStartFrameLayout"
-        android:layout_gravity="center_vertical"
-        android:fontFamily="@font/ys_display_medium"
-        android:text="@string/share_option"
-        android:textColor="@color/YP_Black"
-        android:textSize="@dimen/text_size_setting" />
-
-    <ImageView
-        android:layout_width="@dimen/iconSize"
-        android:layout_height="@dimen/iconSize"
-        android:layout_gravity="end|center"
-        android:src="@drawable/baseline_share_24"
-        app:tint="@color/YP_Text_Gray" />
-    </FrameLayout>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/frame_setting_height"
-        android:orientation="vertical"
-        android:background="@color/YP_White">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/spaceFromStartFrameLayout"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/write_in_tudasyda"
-            android:textColor="@color/YP_Black"
-            android:textSize="@dimen/text_size_setting" />
+        style="@style/TextStyleForSetting"
+        android:text="@string/share_option" />
 
         <ImageView
-        android:layout_width="@dimen/iconSize"
-        android:layout_height="@dimen/iconSize"
-        android:layout_gravity="end|center"
-        android:src="@drawable/group"
-        app:tint="@color/YP_Text_Gray" />
+            style="@style/IconStyleForSetting"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_share_24" />
     </FrameLayout>
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/frame_setting_height"
-        android:orientation="vertical"
-        android:background="@color/YP_White">
+        style="@style/FrameForSettingActivity">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/write_in_tudasyda" />
+
+        <ImageView
+            style="@style/IconStyleForSetting"
+        android:src="@drawable/group" />
+    </FrameLayout>
+    <FrameLayout
+        style="@style/FrameForSettingActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spaceFromStartFrameLayout"
-        android:layout_gravity="center_vertical"
-        android:fontFamily="@font/ys_display_medium"
-        android:text="@string/user_accepted"
-        android:textColor="@color/YP_Black"
-        android:textSize="@dimen/text_size_setting" />
+        style="@style/TextStyleForSetting"
+        android:text="@string/user_accepted" />
 
     <ImageView
-        android:layout_width="@dimen/iconSize"
-        android:layout_height="@dimen/iconSize"
-        android:layout_gravity="end|center"
-        android:src="@drawable/galochka"
-        app:tint="@color/YP_Text_Gray" />
+        style="@style/IconStyleForSetting"
+        android:src="@drawable/galochka" />
     </FrameLayout>
 
 </LinearLayout>

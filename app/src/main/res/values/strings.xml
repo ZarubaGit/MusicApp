@@ -9,4 +9,7 @@
     <string name="share_option" translatable="false">Поделиться приложением</string>
     <string name="write_in_tudasyda" translatable="false">Написать в поддержку</string>
     <string name="user_accepted" translatable="false">Пользовательское соглашение</string>
+    <string name="message" translatable="false">Первоклассным Android разарботчиком можно стать всего за один вечер! Для этого нужно лишь...</string>
+    <string name="not_interested">Не интересно</string>
+    <string name="details">Подробнее</string>
 </resources>

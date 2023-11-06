@@ -1,20 +1,39 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:background="@color/YP_Black"
-        android:src="@drawable/barsik"
-        android:scaleType="centerCrop"/>
-
-    <TextView android:layout_width="wrap_content"
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="24sp"
-        android:text="Работник месяца"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:padding="32dp"
+        android:background="@color/YP_Blue">
+
+        <TextView android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message"
+            style="@style/MessageTextStyle"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <Button
+                style="@style/ButtonStyle"
+                android:id="@+id/detailsButton"
+                android:text="@string/details"
+                app:icon="@drawable/ic_question_mark"
+                />
+
+            <Button style="@style/ButtonStyle"
+                android:id="@+id/cancelButton"
+                android:text="@string/not_interested"
+                app:icon="@drawable/is_close" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
