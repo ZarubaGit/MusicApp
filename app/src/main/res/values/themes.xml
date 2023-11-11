@@ -10,7 +10,17 @@
         <item name="colorSecondaryVariant">@color/YP_Text_Gray</item>
         <item name="colorOnSecondary">@color/YP_White</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/YP_Blue</item>
     </style>
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+
+    <style name="ColorIconEditText">
+        <item name="tint">@color/YP_Text_Gray</item>
+    </style>
+
+    <style name="delete_icon">
+        <item name = "tint">@color/YP_Text_Gray</item>
+    </style>
+
+
 </resources>

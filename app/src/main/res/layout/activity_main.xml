@@ -30,7 +30,7 @@
             app:icon="@drawable/vector"
             app:iconGravity="textStart"
             app:iconPadding="@dimen/icon_onMain_Activity"
-            app:iconTint="@color/YP_Black" />
+            app:iconTint="@color/YP_Black"/>
 
 
         <Button

@@ -31,10 +31,8 @@
 
         <Switch
             android:id="@+id/switchTheme"
-            android:layout_width="56dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end|center"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            style="@style/Switch"
+            tools:ignore="UseSwitchCompatOrMaterialXml"/>
 
 
     </FrameLayout>
@@ -46,6 +44,7 @@
         android:text="@string/share_option" />
 
         <ImageView
+            android:id="@+id/buttonShare"
             style="@style/IconStyleForSetting"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_share_24" />
@@ -58,6 +57,7 @@
             android:text="@string/write_in_tudasyda" />
 
         <ImageView
+            android:id="@+id/sendInSupport"
             style="@style/IconStyleForSetting"
         android:src="@drawable/group" />
     </FrameLayout>
@@ -69,6 +69,7 @@
         android:text="@string/user_accepted" />
 
     <ImageView
+        android:id="@+id/userAccepted"
         style="@style/IconStyleForSetting"
         android:src="@drawable/galochka" />
     </FrameLayout>
