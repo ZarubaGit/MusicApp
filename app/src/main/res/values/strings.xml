@@ -9,4 +9,16 @@
     <string name="share_option" translatable="false">Поделиться приложением</string>
     <string name="write_in_tudasyda" translatable="false">Написать в поддержку</string>
     <string name="user_accepted" translatable="false">Пользовательское соглашение</string>
+    <string name="message" translatable="false">Первоклассным Android разарботчиком можно стать всего за один вечер! Для этого нужно лишь...</string>
+    <string name="not_interested">Не интересно</string>
+    <string name="details">Подробнее</string>
+    <string name="search">Поиск</string>
+    <string name="linkOnAndDevol">https://practicum.yandex.ru/profile/android-developer</string>
+    <string name="shareSub">Здесь будет ссылка на приложение, но не сейчас)))</string>
+    <string name="messageForEmail">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="messageForEmailDevolp">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="offerta">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="titleForShareIcon">Поделиться с помощью:</string>
+    <string name="emailMy">zaruba.nikit@yandex.ru</string>
+
 </resources>

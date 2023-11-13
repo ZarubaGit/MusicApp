@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/StyleFromBackgroundSettingActivity">
+
+
+    <LinearLayout style="@style/ToolBarSetting">
+
+
+        <ImageView
+
+            android:id="@+id/backInMain"
+            style="@style/StrelochkaBack"
+            app:srcCompat="@drawable/light_mode" />
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/TextFromToolBar"
+            android:text="@string/name_setting" />
+    </LinearLayout>
+
+    <FrameLayout
+        style="@style/FrameForSettingActivity"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/night_theme" />
+
+
+        <Switch
+            android:id="@+id/switchTheme"
+            style="@style/Switch"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+
+    </FrameLayout>
+
+    <FrameLayout style="@style/FrameForSettingActivity">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/share_option" />
+
+        <ImageView
+            android:id="@+id/buttonShare"
+            style="@style/IconStyleForSetting"
+            android:src="@drawable/baseline_share_24" />
+    </FrameLayout>
+
+    <FrameLayout style="@style/FrameForSettingActivity">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/write_in_tudasyda" />
+
+        <ImageView
+            android:id="@+id/sendInSupport"
+            style="@style/IconStyleForSetting"
+            android:src="@drawable/group" />
+    </FrameLayout>
+
+    <FrameLayout style="@style/FrameForSettingActivity">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/user_accepted" />
+
+        <ImageView
+            android:id="@+id/userAccepted"
+            style="@style/IconStyleForSetting"
+            android:src="@drawable/galochka" />
+    </FrameLayout>
+
+</LinearLayout>
