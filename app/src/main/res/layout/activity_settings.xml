@@ -5,52 +5,51 @@
     style="@style/StyleFromBackgroundSettingActivity">
 
 
-    <LinearLayout
-        style="@style/ToolBarSetting">
+    <LinearLayout style="@style/ToolBarSetting">
 
 
         <ImageView
 
-            style="@style/StrelochkaBack"
             android:id="@+id/backInMain"
+            style="@style/StrelochkaBack"
             app:srcCompat="@drawable/light_mode" />
 
         <TextView
-            style="@style/TextFromToolBar"
             android:id="@+id/textView"
-            android:text="@string/name_setting"/>
+            style="@style/TextFromToolBar"
+            android:text="@string/name_setting" />
     </LinearLayout>
 
     <FrameLayout
         style="@style/FrameForSettingActivity"
         android:layout_marginTop="24dp">
+
         <TextView
             style="@style/TextStyleForSetting"
-            android:text="@string/night_theme"/>
+            android:text="@string/night_theme" />
 
 
         <Switch
             android:id="@+id/switchTheme"
             style="@style/Switch"
-            tools:ignore="UseSwitchCompatOrMaterialXml"/>
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
     </FrameLayout>
 
-    <FrameLayout
-        style="@style/FrameForSettingActivity">
-    <TextView
-        style="@style/TextStyleForSetting"
-        android:text="@string/share_option" />
+    <FrameLayout style="@style/FrameForSettingActivity">
+
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/share_option" />
 
         <ImageView
             android:id="@+id/buttonShare"
             style="@style/IconStyleForSetting"
-            android:layout_height="wrap_content"
             android:src="@drawable/baseline_share_24" />
     </FrameLayout>
-    <FrameLayout
-        style="@style/FrameForSettingActivity">
+
+    <FrameLayout style="@style/FrameForSettingActivity">
 
         <TextView
             style="@style/TextStyleForSetting"
@@ -59,19 +58,19 @@
         <ImageView
             android:id="@+id/sendInSupport"
             style="@style/IconStyleForSetting"
-        android:src="@drawable/group" />
+            android:src="@drawable/group" />
     </FrameLayout>
-    <FrameLayout
-        style="@style/FrameForSettingActivity">
 
-    <TextView
-        style="@style/TextStyleForSetting"
-        android:text="@string/user_accepted" />
+    <FrameLayout style="@style/FrameForSettingActivity">
 
-    <ImageView
-        android:id="@+id/userAccepted"
-        style="@style/IconStyleForSetting"
-        android:src="@drawable/galochka" />
+        <TextView
+            style="@style/TextStyleForSetting"
+            android:text="@string/user_accepted" />
+
+        <ImageView
+            android:id="@+id/userAccepted"
+            style="@style/IconStyleForSetting"
+            android:src="@drawable/galochka" />
     </FrameLayout>
 
 </LinearLayout>

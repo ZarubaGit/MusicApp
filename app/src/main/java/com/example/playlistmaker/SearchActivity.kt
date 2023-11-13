@@ -11,23 +11,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 
 class SearchActivity : AppCompatActivity() {
+
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var linearLayout: LinearLayout
     private lateinit var savedText: String
 
-    companion object {
-        const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-
         inputEditText = findViewById(R.id.inputEditText)
         clearButton = findViewById(R.id.clearIcon)
         linearLayout = findViewById(R.id.container)
+        val backButton = findViewById<ImageView>(R.id.backInMain)
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         clearButton.setOnClickListener {
@@ -55,7 +52,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку "Назад"
-        val backButton = findViewById<ImageView>(R.id.backInMain)
+
         backButton.setOnClickListener {
             finish()
         }
@@ -64,13 +61,13 @@ class SearchActivity : AppCompatActivity() {
     // Метод для отображения клавиатуры
     private fun showSoftKeyboard() {
         inputEditText.requestFocus()
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT)
+        val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethod.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun hideSoftKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+        val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethod.hideSoftInputFromWindow(inputEditText.windowToken, 0)
     }
 
     // Метод для определения видимости кнопки "Очистить поисковый запрос"
@@ -91,6 +88,10 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         savedText = savedInstanceState.getString(PRODUCT_AMOUNT, "")
         inputEditText.setText(savedText)
+    }
+
+    companion object {
+        const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
     }
 
 

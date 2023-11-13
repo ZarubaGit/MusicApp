@@ -18,5 +18,7 @@
     <string name="messageForEmail">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="messageForEmailDevolp">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="offerta">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="titleForShareIcon">Поделиться с помощью:</string>
+    <string name="emailMy">zaruba.nikit@yandex.ru</string>
 
 </resources>
