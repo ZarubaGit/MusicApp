@@ -20,5 +20,8 @@
     <string name="offerta">https://yandex.ru/legal/practicum_offer/</string>
     <string name="titleForShareIcon">Поделиться с помощью:</string>
     <string name="emailMy">zaruba.nikit@yandex.ru</string>
+    <string name="trackDuration">Продолжительность трека</string>
+    <string name="nameArtist">Имя исполнителя</string>
+    <string name="songName">Название композиции</string>
 
 </resources>
