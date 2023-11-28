@@ -23,5 +23,13 @@
        <item name = "tint">@color/YP_Black</item>
     </style>
 
+    <style name="colorDot">
+        <item name = "tint">@color/YP_White</item>
+    </style>
+
+    <style name="artistTextColor">
+        <item name = "android:textColor">@color/YP_White</item>
+    </style>
+
 
 </resources>
