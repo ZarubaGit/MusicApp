@@ -40,22 +40,20 @@
 
         <TextView
             android:id="@+id/artistNameTextView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:fontFamily="@font/ys_display_regular"
             android:text="@string/nameArtist"
             android:theme="@style/artistTextColor"
             android:textSize="@dimen/textForArtistName"
             android:ellipsize="end"
-            android:maxLength="30"/>
+            android:maxLength="40"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic"
             android:layout_gravity="center"
-            android:layout_marginTop="2dp"
             android:theme="@style/colorDot"/>
 
         <TextView

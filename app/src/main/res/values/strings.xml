@@ -23,5 +23,8 @@
     <string name="trackDuration">Продолжительность трека</string>
     <string name="nameArtist">Имя исполнителя</string>
     <string name="songName">Название композиции</string>
+    <string name="nothing_find">Ничего не нашлось</string>
+    <string name="trouble_with_network">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refreshButton">Обновить</string>
 
 </resources>
