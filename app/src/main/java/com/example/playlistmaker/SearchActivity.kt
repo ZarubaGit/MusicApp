@@ -32,7 +32,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val iTunseService = retrofit.create(ApiSong::class.java)
 
-    private val trackList = mutableListOf<SongRequest>()
+    private val trackList = mutableListOf<Track>()
 
 
     private lateinit var inputEditText: EditText
@@ -94,8 +94,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         udpateButton.setOnClickListener {
-            if (lastSearchQuery != null) {
-                performSearch(lastSearchQuery!!)
+            val query = lastSearchQuery
+            if (query != null) {
+                performSearch(query)
             }
         }
 
@@ -118,10 +119,11 @@ class SearchActivity : AppCompatActivity() {
         iTunseService.search(query).enqueue(object : Callback<SongResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
-                if (response.code() == 200) {
+                val bodyResponse = response.body()?.results
+                if (response.isSuccessful) {
                     trackList.clear()
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        trackList.addAll(response.body()?.results!!)
+                    if (bodyResponse?.isNotEmpty() == true) {
+                        trackList.addAll(bodyResponse)
                         adapter.notifyDataSetChanged()
                         recyclerView.visibility = View.VISIBLE
                     }

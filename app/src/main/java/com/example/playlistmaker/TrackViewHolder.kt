@@ -17,7 +17,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackTimeTextView: TextView = itemView.findViewById(R.id.trackTimeTextView)
     private val artworkImageView: ImageView = itemView.findViewById(R.id.artworkImageView)
 
-    fun bind(track: SongRequest) {
+    fun bind(track: Track) {
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
         val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
