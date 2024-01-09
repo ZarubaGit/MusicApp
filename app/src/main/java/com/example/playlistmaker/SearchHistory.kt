@@ -7,12 +7,19 @@ import com.google.gson.reflect.TypeToken
 
 class SearchHistory(context: Context) {
 
+    companion object {
+        private const val PREF_NAME = "SearchHistory"
+        private const val KEY_HISTORY = "history"
+        private const val MAX_HISTORY_SIZE = 10
+    }
+
     private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
 
     fun getSearchHistory(): MutableList<Track> {
-        val historyString = sharedPreferences.getString("history", null)
+        val historyString = sharedPreferences.getString(KEY_HISTORY, null)
+        Log.d("SH", "getSearchHistory: $historyString")
         return if (historyString != null) {
             gson.fromJson(historyString, object : TypeToken<MutableList<Track>>() {}.type)
         } else {
@@ -24,7 +31,7 @@ class SearchHistory(context: Context) {
         val history = getSearchHistory().toMutableList()
         if (history.none { it.trackId == track.trackId }) {
             history.add(0, track)
-            if (history.size > 10) {
+            if (history.size > MAX_HISTORY_SIZE) {
                 history.removeAt(history.size - 1)
             }
             saveHistoryToPreferences(history)
@@ -34,22 +41,11 @@ class SearchHistory(context: Context) {
 
     private fun saveHistoryToPreferences(history: MutableList<Track>) {
         val historyString = gson.toJson(history)
-        sharedPreferences.edit().putString("history", historyString).apply()
+        sharedPreferences.edit().putString(KEY_HISTORY, historyString).apply()
         Log.d("SearchHistory", "Saved history to SharedPreferences")
     }
 
     fun clearSearchHistory() {
-        sharedPreferences.edit().remove("history").apply()
+        sharedPreferences.edit().remove(KEY_HISTORY).apply()
     }
-
-    fun removeTrackFromHistory(trackId: Int) {
-        val history = getSearchHistory().toMutableList()  // Создаем копию списка
-        val index = history.indexOfFirst { it.trackId == trackId }
-        if (index != -1) {
-            history.removeAt(index)
-            saveHistoryToPreferences(history)
-        }
-    }
-
-
 }

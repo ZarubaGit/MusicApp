@@ -47,6 +47,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SearchHistory
     private lateinit var clearHistoryButton: Button
     private var lastSearchQuery: String? = null
+    private lateinit var historyContainer : LinearLayout
+
 
 
 
@@ -66,6 +68,8 @@ class SearchActivity : AppCompatActivity() {
         imageHolder = findViewById(R.id.imageHolder)
         searchHistory = SearchHistory(this)
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        historyContainer = findViewById(R.id.historyContainer)
+
 
         clearHistoryButton.setOnClickListener {
             clearSearchHistory()
@@ -79,11 +83,9 @@ class SearchActivity : AppCompatActivity() {
             hideSoftKeyboard()
             clearButton.visibility = View.GONE
             textHolderMessage.visibility = View.GONE
-            recyclerView.visibility = View.GONE
             imageHolder.visibility = View.GONE
-            searchHistory.clearSearchHistory()
+            adapter.setTrackList(trackList = searchHistory.getSearchHistory())
             adapter.notifyDataSetChanged()
-            updateUI()
         }
 
         // Установка TextWatcher для поля ввода
@@ -92,6 +94,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                updateUI()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -101,8 +104,9 @@ class SearchActivity : AppCompatActivity() {
 
         // Обработка нажатия на поле ввода для отображения клавиатуры
         inputEditText.setOnClickListener {
-            inputEditText.text.clear()
+//            inputEditText.text.clear()
             showSoftKeyboard()
+
             // Показ клавиатуры
         }
 
@@ -122,6 +126,11 @@ class SearchActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                hideSearchUI()
+            }
+        }
         // Обработка нажатия на кнопку "Назад"
         backButton.setOnClickListener {
             finish()
@@ -130,23 +139,31 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
+        adapter.setTrackList(emptyList())
         updateUI()
     }
 
     private fun updateUI() {
         val history = searchHistory.getSearchHistory()
 
-        if (inputEditText.text.isEmpty() && history.isNotEmpty()) {
-            textHolderMessage.text = getString(R.string.you_searched)
-            recyclerView.visibility = View.VISIBLE
+        if (history.isNotEmpty()) {
+            historyContainer.visibility = View.VISIBLE
+            clearHistoryButton.visibility = View.VISIBLE
             adapter.setTrackList(history)  // Обновление данных в адаптере
         } else {
-            textHolderMessage.text = ""
-            recyclerView.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+            historyContainer.visibility = View.GONE
         }
     }
 
+    private fun hideSearchUI(){
+        adapter.setTrackList(emptyList())
+        historyContainer.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
+    }
+
     private fun performSearch(query: String) {
+        hideSearchUI()
         iTunseService.search(query).enqueue(object : Callback<SongResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
@@ -155,6 +172,7 @@ class SearchActivity : AppCompatActivity() {
                     trackList.clear()
                     if (bodyResponse?.isNotEmpty() == true) {
                         trackList.addAll(bodyResponse)
+                        adapter.setTrackList(trackList)
                         adapter.notifyDataSetChanged()
                         recyclerView.visibility = View.VISIBLE
                     }
@@ -202,9 +220,12 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun setupRecyclerView() {
-        adapter = TrackAdapter(trackList, searchHistory)
+        val sh = searchHistory.getSearchHistory()
+        adapter = TrackAdapter(sh, searchHistory)
+        searchHistory.getSearchHistory()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        updateUI()
     }
 
     // Метод для отображения клавиатуры

@@ -16,8 +16,7 @@ class TrackAdapter(private val trackList: MutableList<Track>, private val histor
         holder.itemView.setOnClickListener{
             val clickedTrack = trackList[position]
             historyManager.saveTrackToHistory(clickedTrack)
-            historyManager.removeTrackFromHistory(clickedTrack.trackId)
-            notifyDataSetChanged()
+
         }
     }
 
