@@ -29,20 +29,26 @@ class SearchHistory(context: Context) {
 
     fun saveTrackToHistory(track: Track) {
         val history = getSearchHistory().toMutableList()
-        if (history.none { it.trackId == track.trackId }) {
+        val existingTrackIndex = history.indexOfFirst { it.trackId == track.trackId }
+
+        if (existingTrackIndex != -1) {
+            // Если трек уже есть в истории, переместить его в верхнюю часть списка
+            history.removeAt(existingTrackIndex)
             history.add(0, track)
-            if (history.size > MAX_HISTORY_SIZE) {
-                history.removeAt(history.size - 1)
-            }
-            saveHistoryToPreferences(history)
-            Log.d("SearchHistory", "Saved history: $history")
+        } else {
+            // Если трека нет в истории, добавить его в начало списка
+            history.add(0, track)
         }
+        // Обрезать историю, если она превышает максимальный размер
+        if (history.size > MAX_HISTORY_SIZE) {
+            history.removeAt(history.size - 1)
+        }
+        saveHistoryToPreferences(history)
     }
 
     private fun saveHistoryToPreferences(history: MutableList<Track>) {
         val historyString = gson.toJson(history)
         sharedPreferences.edit().putString(KEY_HISTORY, historyString).apply()
-        Log.d("SearchHistory", "Saved history to SharedPreferences")
     }
 
     fun clearSearchHistory() {

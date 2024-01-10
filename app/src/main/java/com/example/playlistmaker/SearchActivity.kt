@@ -201,7 +201,7 @@ class SearchActivity : AppCompatActivity() {
                 imageHolder.setImageResource(R.drawable.network_error)
                 showMessage(getString(R.string.trouble_with_network), t.message.toString())
                 udpateButton.visibility = View.VISIBLE
-                updateUI()
+                hideSearchUI()
             }
         })
     }

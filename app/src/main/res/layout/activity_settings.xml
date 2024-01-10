@@ -18,6 +18,7 @@
             android:id="@+id/textView"
             style="@style/TextFromToolBar"
             android:text="@string/name_setting"
+            android:layout_marginStart="12dp"
             android:textSize="@dimen/text_size"/>
     </LinearLayout>
 
