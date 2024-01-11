@@ -1,10 +1,12 @@
 package com.example.playlistmaker
 
+import SearchHistory
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -31,10 +33,7 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val iTunseService = retrofit.create(ApiSong::class.java)
-
     private val trackList = mutableListOf<Track>()
-
-
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var linearLayout: LinearLayout
@@ -45,7 +44,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var imageHolder: ImageView
     private lateinit var textHolderMessage: TextView
     private lateinit var udpateButton: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var clearHistoryButton: Button
     private var lastSearchQuery: String? = null
+    private lateinit var historyContainer : LinearLayout
+
+
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -58,10 +63,19 @@ class SearchActivity : AppCompatActivity() {
         linearLayout = findViewById(R.id.container)
         backButton = findViewById(R.id.backInMain)
         recyclerView = findViewById(R.id.recyclerView)
-        setupRecyclerView()
         textHolderMessage = findViewById(R.id.placeholderMessage)
         udpateButton = findViewById(R.id.refreshButton)
         imageHolder = findViewById(R.id.imageHolder)
+        searchHistory = SearchHistory(this)
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        historyContainer = findViewById(R.id.historyContainer)
+
+
+        clearHistoryButton.setOnClickListener {
+            clearSearchHistory()
+        }
+
+        setupRecyclerView()
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         clearButton.setOnClickListener {
@@ -69,8 +83,9 @@ class SearchActivity : AppCompatActivity() {
             hideSoftKeyboard()
             clearButton.visibility = View.GONE
             textHolderMessage.visibility = View.GONE
-            recyclerView.visibility = View.GONE
             imageHolder.visibility = View.GONE
+            adapter.setTrackList(trackList = searchHistory.getSearchHistory())
+            adapter.notifyDataSetChanged()
         }
 
         // Установка TextWatcher для поля ввода
@@ -79,6 +94,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                updateUI()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -88,8 +104,9 @@ class SearchActivity : AppCompatActivity() {
 
         // Обработка нажатия на поле ввода для отображения клавиатуры
         inputEditText.setOnClickListener {
-            inputEditText.text.clear()
+//            inputEditText.text.clear()
             showSoftKeyboard()
+
             // Показ клавиатуры
         }
 
@@ -109,13 +126,44 @@ class SearchActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                hideSearchUI()
+            }
+        }
         // Обработка нажатия на кнопку "Назад"
         backButton.setOnClickListener {
             finish()
         }
     }
 
+    private fun clearSearchHistory() {
+        searchHistory.clearSearchHistory()
+        adapter.setTrackList(emptyList())
+        updateUI()
+    }
+
+    private fun updateUI() {
+        val history = searchHistory.getSearchHistory()
+
+        if (history.isNotEmpty()) {
+            historyContainer.visibility = View.VISIBLE
+            clearHistoryButton.visibility = View.VISIBLE
+            adapter.setTrackList(history)  // Обновление данных в адаптере
+        } else {
+            clearHistoryButton.visibility = View.GONE
+            historyContainer.visibility = View.GONE
+        }
+    }
+
+    private fun hideSearchUI(){
+        adapter.setTrackList(emptyList())
+        historyContainer.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
+    }
+
     private fun performSearch(query: String) {
+        hideSearchUI()
         iTunseService.search(query).enqueue(object : Callback<SongResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
@@ -124,6 +172,7 @@ class SearchActivity : AppCompatActivity() {
                     trackList.clear()
                     if (bodyResponse?.isNotEmpty() == true) {
                         trackList.addAll(bodyResponse)
+                        adapter.setTrackList(trackList)
                         adapter.notifyDataSetChanged()
                         recyclerView.visibility = View.VISIBLE
                     }
@@ -142,6 +191,7 @@ class SearchActivity : AppCompatActivity() {
                         getString(R.string.trouble_with_network),
                         response.code().toString()
                     )
+                    updateUI()
                 }
             }
 
@@ -151,6 +201,7 @@ class SearchActivity : AppCompatActivity() {
                 imageHolder.setImageResource(R.drawable.network_error)
                 showMessage(getString(R.string.trouble_with_network), t.message.toString())
                 udpateButton.visibility = View.VISIBLE
+                hideSearchUI()
             }
         })
     }
@@ -169,9 +220,12 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun setupRecyclerView() {
-        adapter = TrackAdapter(trackList)
+        val sh = searchHistory.getSearchHistory()
+        adapter = TrackAdapter(sh, searchHistory)
+        searchHistory.getSearchHistory()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        updateUI()
     }
 
     // Метод для отображения клавиатуры
