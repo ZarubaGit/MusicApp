@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import SearchHistory
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -76,6 +77,18 @@ class SearchActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
+
+        recyclerView.setOnClickListener{view ->
+            val position = recyclerView.getChildAdapterPosition(view)
+            if(position != RecyclerView.NO_POSITION){
+                val clickedTrack = adapter.trackList[position]
+
+                val intent = Intent(this, AudioPlayer::class.java)
+                intent.putExtra("track", clickedTrack)
+
+                startActivity(intent)
+            }
+        }
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         clearButton.setOnClickListener {

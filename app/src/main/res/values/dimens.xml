@@ -14,4 +14,8 @@
     <dimen name="searchBarMargin">56dp</dimen>
     <dimen name="forToolBarLeftSpace">12dp</dimen>
     <dimen name="sizeForTextSearchTitle">19sp</dimen>
+    <dimen name="dimen14">14sp</dimen>
+    <dimen name="dimen51">51sp</dimen>
+    <dimen name="dimen100">100sp</dimen>
+    <dimen name="dimen13">13sp</dimen>
 </resources>
