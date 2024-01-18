@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,21 +25,24 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var yearRightSide: TextView
     private lateinit var primaryGenreName: TextView
     private lateinit var countryRightSide: TextView
+    private lateinit var binding: ActivityAudioPlayerBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audio_player)
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        backButton = findViewById(R.id.backInSearch)
-        artworkImageView = findViewById(R.id.artworkImageView)
+        backButton = binding.backInSearch
+        artworkImageView = binding.artworkImageView
         artworkImageView.setImageResource(R.drawable.placeholder)
-        nameTrackTextView = findViewById(R.id.nameTrackTextView)
-        artistNameTextView = findViewById(R.id.artistNameTextView)
-        trackTime = findViewById(R.id.trackTime)
-        minAndSecTrack = findViewById(R.id.minAndSecTrack)
-        nameOfAlbum = findViewById(R.id.nameOfAlbum)
-        yearRightSide = findViewById(R.id.yearRightSide)
-        primaryGenreName = findViewById(R.id.primaryGenreName)
-        countryRightSide = findViewById(R.id.countryRightSide)
+        nameTrackTextView = binding.nameTrackTextView
+        artistNameTextView = binding.artistNameTextView
+        trackTime = binding.trackTime
+        minAndSecTrack = binding.minAndSecTrack
+        nameOfAlbum = binding.nameOfAlbum
+        yearRightSide = binding.yearRightSide
+        primaryGenreName = binding.primaryGenreName
+        countryRightSide = binding.countryRightSide
 
 
         val track: Track? = intent.getSerializableExtra("track") as Track?

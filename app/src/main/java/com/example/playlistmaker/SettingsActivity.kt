@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -16,16 +17,19 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var switchTheme: Switch
     private lateinit var supportSend: ImageView
     private lateinit var userAccepted: ImageView
+    private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        backButton = findViewById(R.id.backInMain)
-        shareButton = findViewById(R.id.buttonShare)
-        switchTheme = findViewById(R.id.switchTheme)
-        supportSend = findViewById(R.id.sendInSupport)
-        userAccepted = findViewById(R.id.userAccepted)
+        backButton = binding.backInMain
+        shareButton = binding.buttonShare
+        switchTheme = binding.switchTheme
+        supportSend = binding.sendInSupport
+        userAccepted = binding.userAccepted
 
         // Загрузка сохраненной темы
         val sharedPreference = getSharedPreferences(FILE_FOR_SAVED, MODE_PRIVATE)
