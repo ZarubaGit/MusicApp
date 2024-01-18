@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import SearchHistory
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,27 +50,26 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private var lastSearchQuery: String? = null
     private lateinit var historyContainer : LinearLayout
-
-
-
-
+    private lateinit var binding: ActivitySearchBinding
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        inputEditText = findViewById(R.id.inputEditText)
-        clearButton = findViewById(R.id.clearIcon)
-        linearLayout = findViewById(R.id.container)
-        backButton = findViewById(R.id.backInMain)
-        recyclerView = findViewById(R.id.recyclerView)
-        textHolderMessage = findViewById(R.id.placeholderMessage)
-        udpateButton = findViewById(R.id.refreshButton)
-        imageHolder = findViewById(R.id.imageHolder)
+        inputEditText = binding.inputEditText
+        clearButton = binding.clearIcon
+        linearLayout = binding.container
+        backButton = binding.backInMain
+        recyclerView = binding.recyclerView
+        textHolderMessage = binding.placeholderMessage
+        udpateButton = binding.refreshButton
+        imageHolder = binding.imageHolder
         searchHistory = SearchHistory(this)
-        clearHistoryButton = findViewById(R.id.clearHistoryButton)
-        historyContainer = findViewById(R.id.historyContainer)
+        clearHistoryButton = binding.clearHistoryButton
+        historyContainer = binding.historyContainer
 
 
         clearHistoryButton.setOnClickListener {
@@ -76,6 +77,18 @@ class SearchActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
+
+        recyclerView.setOnClickListener{view ->
+            val position = recyclerView.getChildAdapterPosition(view)
+            if(position != RecyclerView.NO_POSITION){
+                val clickedTrack = adapter.trackList[position]
+
+                val intent = Intent(this, AudioPlayer::class.java)
+                intent.putExtra("track", clickedTrack)
+
+                startActivity(intent)
+            }
+        }
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         clearButton.setOnClickListener {
