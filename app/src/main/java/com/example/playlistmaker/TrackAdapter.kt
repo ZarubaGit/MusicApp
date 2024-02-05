@@ -32,7 +32,6 @@ class TrackAdapter(val trackList: MutableList<Track>, private val historyManager
         this.trackList.clear()
         this.trackList.addAll(trackList)
         notifyDataSetChanged()
-        Log.d("TrackAdapter", "Updated trackList in adapter: $trackList")
     }
 
 

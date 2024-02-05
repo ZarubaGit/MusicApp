@@ -74,35 +74,35 @@
         app:layout_constraintTop_toBottomOf="@+id/nameTrackTextView" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/addToPlayListButton"
         android:layout_width="@dimen/dimen51"
         android:layout_height="@dimen/dimen51"
         android:layout_marginStart="8dp"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
         app:srcCompat="@drawable/button_ad_in_playlist" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/playButton"
         android:layout_width="@dimen/dimen100"
         android:layout_height="@dimen/dimen100"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="@+id/artistNameTextView"
         app:layout_constraintStart_toStartOf="@+id/artistNameTextView"
         app:layout_constraintTop_toBottomOf="@+id/artistNameTextView"
-        app:srcCompat="@drawable/button_play" />
+        app:srcCompat="@drawable/button_play"/>
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/likeButton"
         android:layout_width="@dimen/dimen51"
         android:layout_height="@dimen/dimen51"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
         app:srcCompat="@drawable/button_liked_track" />
 
     <TextView
@@ -114,9 +114,9 @@
         android:text="@string/trackDuration"
         android:textSize="@dimen/textForArtistName"
         android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintEnd_toEndOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="@+id/playButton"
+        app:layout_constraintTop_toBottomOf="@+id/playButton" />
 
     <TextView
         android:id="@+id/durationTrack"

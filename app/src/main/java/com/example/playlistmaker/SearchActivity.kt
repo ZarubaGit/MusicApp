@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -15,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +54,13 @@ class SearchActivity : AppCompatActivity() {
     private var lastSearchQuery: String? = null
     private lateinit var historyContainer : LinearLayout
     private lateinit var binding: ActivitySearchBinding
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString())}
+    private val clickTrackRunnable = Runnable {trackDebounce()}
+    private lateinit var progressBar: ProgressBar
+    private var isClickAllowed = true
+    private var clickedTrack: Track? = null
+    private val lock = Any()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +80,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = SearchHistory(this)
         clearHistoryButton = binding.clearHistoryButton
         historyContainer = binding.historyContainer
+        progressBar = binding.progressBar
 
 
         clearHistoryButton.setOnClickListener {
@@ -78,15 +89,15 @@ class SearchActivity : AppCompatActivity() {
 
         setupRecyclerView()
 
-        recyclerView.setOnClickListener{view ->
-            val position = recyclerView.getChildAdapterPosition(view)
-            if(position != RecyclerView.NO_POSITION){
-                val clickedTrack = adapter.trackList[position]
-
-                val intent = Intent(this, AudioPlayer::class.java)
-                intent.putExtra("track", clickedTrack)
-
-                startActivity(intent)
+        // Переход с элемента поиска на экран Аудиоплеера
+        recyclerView.setOnClickListener { view ->
+            if (trackDebounce()) {
+                val position = recyclerView.getChildAdapterPosition(view)
+                if (position != RecyclerView.NO_POSITION) {
+                    val localClickedTrack = adapter.trackList[position]
+                    clickedTrack = localClickedTrack
+                    handleClick(localClickedTrack)
+                }
             }
         }
 
@@ -108,6 +119,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 updateUI()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -150,6 +162,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
+        handler.removeCallbacks(clickTrackRunnable)
+    }
+
     private fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
         adapter.setTrackList(emptyList())
@@ -162,10 +180,12 @@ class SearchActivity : AppCompatActivity() {
         if (history.isNotEmpty()) {
             historyContainer.visibility = View.VISIBLE
             clearHistoryButton.visibility = View.VISIBLE
+            udpateButton.visibility = View.GONE
             adapter.setTrackList(history)  // Обновление данных в адаптере
         } else {
             clearHistoryButton.visibility = View.GONE
             historyContainer.visibility = View.GONE
+            progressBar.visibility = View.GONE
         }
     }
 
@@ -173,9 +193,40 @@ class SearchActivity : AppCompatActivity() {
         adapter.setTrackList(emptyList())
         historyContainer.visibility = View.GONE
         clearHistoryButton.visibility = View.GONE
+
+    }
+
+    private fun searchDebounce(){
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+    private fun handleClick(clickedTrack: Track){
+        val intent = Intent(this, AudioPlayer::class.java)
+        intent.putExtra(TRACK_KEY, clickedTrack)
+        startActivity(intent)
+    }
+    private fun trackDebounce(): Boolean {
+            val current = isClickAllowed
+            if (isClickAllowed) {
+                isClickAllowed = false
+                handler.removeCallbacks(clickTrackRunnable)
+                handler.postDelayed({
+                    // Здесь должна быть ваша логика обработки клика
+                    val localClickedTrack = clickedTrack
+                    if (localClickedTrack != null) {
+                        handleClick(localClickedTrack)
+                    }
+                    isClickAllowed = true
+                }, CLICK_DEBOUNCE_DELAY)
+            }
+            return current
     }
 
     private fun performSearch(query: String) {
+        if (query.isBlank()) {
+            return
+        }
+        progressBar.visibility = View.VISIBLE
         hideSearchUI()
         iTunseService.search(query).enqueue(object : Callback<SongResponse> {
             @SuppressLint("NotifyDataSetChanged")
@@ -183,6 +234,7 @@ class SearchActivity : AppCompatActivity() {
                 val bodyResponse = response.body()?.results
                 if (response.isSuccessful) {
                     trackList.clear()
+                    progressBar.visibility = View.GONE
                     if (bodyResponse?.isNotEmpty() == true) {
                         trackList.addAll(bodyResponse)
                         adapter.setTrackList(trackList)
@@ -214,6 +266,7 @@ class SearchActivity : AppCompatActivity() {
                 imageHolder.setImageResource(R.drawable.network_error)
                 showMessage(getString(R.string.trouble_with_network), t.message.toString())
                 udpateButton.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
                 hideSearchUI()
             }
         })
@@ -271,5 +324,8 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1500L
+        const val TRACK_KEY = "track"
     }
 }

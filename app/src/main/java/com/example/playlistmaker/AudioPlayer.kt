@@ -2,9 +2,14 @@ package com.example.playlistmaker
 
 
 import android.content.Context
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -26,6 +31,14 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var primaryGenreName: TextView
     private lateinit var countryRightSide: TextView
     private lateinit var binding: ActivityAudioPlayerBinding
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var playButton: ImageView
+    private lateinit var handler: Handler
+    private var isPlaying: Boolean = false
+    private lateinit var updateTimeRunnable: Runnable
+    private lateinit var pauseButton: Button
+    private val formatTime by lazy {SimpleDateFormat("mm:ss", Locale.getDefault())}
+    private val formatYear by lazy {SimpleDateFormat("yyyy", Locale.getDefault())}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -43,22 +56,46 @@ class AudioPlayer : AppCompatActivity() {
         yearRightSide = binding.yearRightSide
         primaryGenreName = binding.primaryGenreName
         countryRightSide = binding.countryRightSide
+        playButton = binding.playButton
+
 
 
         val track: Track? = intent.getSerializableExtra("track") as Track?
         dataAssignment(track)
 
-        backButton.setOnClickListener{
+        handler = Handler()
+
+        playButton.setOnClickListener {
+            if(isPlaying){
+                mediaPlayer.pause()
+            } else {
+                mediaPlayer.start()
+                handler.post(updateTimeRunnable)
+            }
+            isPlaying = !isPlaying
+            updatePlayButtonImage()
+        }
+
+        backButton.setOnClickListener {
+            mediaPlayer.release()
+            handler.removeCallbacks(updateTimeRunnable)
             finish()
         }
     }
-    fun dataAssignment(track: Track?){
-        if(track != null){
-            val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault())
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        handler.removeCallbacks(updateTimeRunnable)
+
+    }
+
+    fun dataAssignment(track: Track?) {
+        if (track != null) {
+            val formattedTime = formatTime
                 .format(track.trackTimeMillis)
-            val formattedData = SimpleDateFormat("yyyy", Locale.getDefault())
             val releaseYear = if (track.releaseDate != null) {
-                formattedData.format(formattedData.parse(track.releaseDate))
+                formatYear.format(formatYear.parse(track.releaseDate))
             } else {
                 ""
             }
@@ -66,10 +103,10 @@ class AudioPlayer : AppCompatActivity() {
             trackTime.text = formattedTime
             nameTrackTextView.text = track.trackName
             artistNameTextView.text = track.artistName
-            nameOfAlbum.text = track.collectionName?:""
-            yearRightSide.text = releaseYear?:""
-            primaryGenreName.text = track.primaryGenreName?:""
-            countryRightSide.text = track.country?:""
+            nameOfAlbum.text = track.collectionName ?: ""
+            yearRightSide.text = releaseYear ?: ""
+            primaryGenreName.text = track.primaryGenreName ?: ""
+            countryRightSide.text = track.country ?: ""
             Glide.with(this)
                 .load(track.getCoverArtwork())
                 .centerCrop()
@@ -77,6 +114,32 @@ class AudioPlayer : AppCompatActivity() {
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .into(artworkImageView)
+            mediaPlayer = MediaPlayer().apply {
+                val trackUrl = Uri.parse(track.previewUrl)
+                setDataSource(this@AudioPlayer, trackUrl)
+                prepareAsync()
+                setOnPreparedListener {
+                    start()
+                    handler.post(updateTimeRunnable)
+                    this@AudioPlayer.isPlaying = true
+                    updatePlayButtonImage()
+                }
+                setOnCompletionListener {
+                    this@AudioPlayer.isPlaying = false
+                    updatePlayButtonImage()
+                    handler.removeCallbacks(updateTimeRunnable)
+                }
+            }
+            updateTimeRunnable = object :Runnable{
+                override fun run() {
+                    if(mediaPlayer.isPlaying && mediaPlayer != null){
+                        val currentPosition = mediaPlayer.currentPosition
+                        trackTime.text = formatTime
+                            .format(currentPosition)
+                        handler.postDelayed(this, TIME_IS_SECOND)
+                    }
+                }
+            }
 
         }
     }
@@ -85,6 +148,18 @@ class AudioPlayer : AppCompatActivity() {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
-            context.resources.displayMetrics).toInt()
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
+    private fun updatePlayButtonImage(){
+        if(isPlaying){
+            playButton.setImageResource(R.drawable.button_pause)
+        } else {
+            playButton.setImageResource(R.drawable.button_play)
+        }
+    }
+    companion object {
+        private const val TIME_IS_SECOND = 1000L
     }
 }
