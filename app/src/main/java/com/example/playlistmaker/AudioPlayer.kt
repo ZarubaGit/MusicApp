@@ -37,6 +37,8 @@ class AudioPlayer : AppCompatActivity() {
     private var isPlaying: Boolean = false
     private lateinit var updateTimeRunnable: Runnable
     private lateinit var pauseButton: Button
+    private val formatTime by lazy {SimpleDateFormat("mm:ss", Locale.getDefault())}
+    private val formatYear by lazy {SimpleDateFormat("yyyy", Locale.getDefault())}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -90,11 +92,10 @@ class AudioPlayer : AppCompatActivity() {
 
     fun dataAssignment(track: Track?) {
         if (track != null) {
-            val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault())
+            val formattedTime = formatTime
                 .format(track.trackTimeMillis)
-            val formattedData = SimpleDateFormat("yyyy", Locale.getDefault())
             val releaseYear = if (track.releaseDate != null) {
-                formattedData.format(formattedData.parse(track.releaseDate))
+                formatYear.format(formatYear.parse(track.releaseDate))
             } else {
                 ""
             }
@@ -133,7 +134,7 @@ class AudioPlayer : AppCompatActivity() {
                 override fun run() {
                     if(mediaPlayer.isPlaying && mediaPlayer != null){
                         val currentPosition = mediaPlayer.currentPosition
-                        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+                        trackTime.text = formatTime
                             .format(currentPosition)
                         handler.postDelayed(this, TIME_IS_SECOND)
                     }

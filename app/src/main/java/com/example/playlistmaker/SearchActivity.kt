@@ -162,6 +162,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
+        handler.removeCallbacks(clickTrackRunnable)
+    }
+
     private fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
         adapter.setTrackList(emptyList())
@@ -196,11 +202,10 @@ class SearchActivity : AppCompatActivity() {
     }
     private fun handleClick(clickedTrack: Track){
         val intent = Intent(this, AudioPlayer::class.java)
-        intent.putExtra("track", clickedTrack)
+        intent.putExtra(TRACK_KEY, clickedTrack)
         startActivity(intent)
     }
     private fun trackDebounce(): Boolean {
-        synchronized(lock) {
             val current = isClickAllowed
             if (isClickAllowed) {
                 isClickAllowed = false
@@ -215,7 +220,6 @@ class SearchActivity : AppCompatActivity() {
                 }, CLICK_DEBOUNCE_DELAY)
             }
             return current
-        }
     }
 
     private fun performSearch(query: String) {
@@ -322,5 +326,6 @@ class SearchActivity : AppCompatActivity() {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1500L
+        const val TRACK_KEY = "track"
     }
 }
