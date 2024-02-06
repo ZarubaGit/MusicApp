@@ -28,7 +28,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), TrackClickListener {
 
     private val urlApi = "https://itunes.apple.com"
 
@@ -279,9 +279,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
+    override fun onTrackClicked(track: Track) {
+        if (trackDebounce()) {
+            handleClick(track)
+        }
+    }
     private fun setupRecyclerView() {
         val sh = searchHistory.getSearchHistory()
-        adapter = TrackAdapter(sh, searchHistory)
+        adapter = TrackAdapter(sh, searchHistory, this)
         searchHistory.getSearchHistory()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -319,7 +324,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
         private const val SEARCH_DEBOUNCE_DELAY = 1000L
-        private const val CLICK_DEBOUNCE_DELAY = 1500L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
         const val TRACK_KEY = "track"
     }
 }
