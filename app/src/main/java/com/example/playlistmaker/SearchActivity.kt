@@ -52,15 +52,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SearchHistory
     private lateinit var clearHistoryButton: Button
     private var lastSearchQuery: String? = null
-    private lateinit var historyContainer : LinearLayout
+    private lateinit var historyContainer: LinearLayout
     private lateinit var binding: ActivitySearchBinding
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString())}
-    private val clickTrackRunnable = Runnable {trackDebounce()}
+    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString()) }
+
     private lateinit var progressBar: ProgressBar
-    private var isClickAllowed = true
+    private var isClickAllowed: Boolean = true
     private var clickedTrack: Track? = null
-    private val lock = Any()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,7 +164,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(searchRunnable)
-        handler.removeCallbacks(clickTrackRunnable)
     }
 
     private fun clearSearchHistory() {
@@ -189,37 +187,33 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideSearchUI(){
+    private fun hideSearchUI() {
         adapter.setTrackList(emptyList())
         historyContainer.visibility = View.GONE
         clearHistoryButton.visibility = View.GONE
 
     }
 
-    private fun searchDebounce(){
+    private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
-    private fun handleClick(clickedTrack: Track){
+
+    private fun handleClick(clickedTrack: Track) {
         val intent = Intent(this, AudioPlayer::class.java)
         intent.putExtra(TRACK_KEY, clickedTrack)
         startActivity(intent)
     }
+
     private fun trackDebounce(): Boolean {
-            val current = isClickAllowed
-            if (isClickAllowed) {
-                isClickAllowed = false
-                handler.removeCallbacks(clickTrackRunnable)
-                handler.postDelayed({
-                    // Здесь должна быть ваша логика обработки клика
-                    val localClickedTrack = clickedTrack
-                    if (localClickedTrack != null) {
-                        handleClick(localClickedTrack)
-                    }
-                    isClickAllowed = true
-                }, CLICK_DEBOUNCE_DELAY)
-            }
-            return current
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({
+                isClickAllowed = true
+            }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun performSearch(query: String) {
@@ -324,7 +318,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY = 1000L
         private const val CLICK_DEBOUNCE_DELAY = 1500L
         const val TRACK_KEY = "track"
     }
