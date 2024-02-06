@@ -28,7 +28,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), TrackClickListener {
 
     private val urlApi = "https://itunes.apple.com"
 
@@ -52,15 +52,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SearchHistory
     private lateinit var clearHistoryButton: Button
     private var lastSearchQuery: String? = null
-    private lateinit var historyContainer : LinearLayout
+    private lateinit var historyContainer: LinearLayout
     private lateinit var binding: ActivitySearchBinding
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString())}
-    private val clickTrackRunnable = Runnable {trackDebounce()}
+    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString()) }
     private lateinit var progressBar: ProgressBar
-    private var isClickAllowed = true
-    private var clickedTrack: Track? = null
-    private val lock = Any()
+    private var isClickAllowed: Boolean = true
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,24 +79,12 @@ class SearchActivity : AppCompatActivity() {
         historyContainer = binding.historyContainer
         progressBar = binding.progressBar
 
-
+        //обработка нажатия по очистке истории поиска
         clearHistoryButton.setOnClickListener {
             clearSearchHistory()
         }
 
         setupRecyclerView()
-
-        // Переход с элемента поиска на экран Аудиоплеера
-        recyclerView.setOnClickListener { view ->
-            if (trackDebounce()) {
-                val position = recyclerView.getChildAdapterPosition(view)
-                if (position != RecyclerView.NO_POSITION) {
-                    val localClickedTrack = adapter.trackList[position]
-                    clickedTrack = localClickedTrack
-                    handleClick(localClickedTrack)
-                }
-            }
-        }
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         clearButton.setOnClickListener {
@@ -135,6 +120,7 @@ class SearchActivity : AppCompatActivity() {
             // Показ клавиатуры
         }
 
+        //кнопка обновить запрос при отсутствии соединения
         udpateButton.setOnClickListener {
             val query = lastSearchQuery
             if (query != null) {
@@ -151,6 +137,7 @@ class SearchActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 hideSearchUI()
@@ -162,18 +149,20 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    //удаляем Раннаблы из списка задач, чтобы не словить утечку ресурсов
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(searchRunnable)
-        handler.removeCallbacks(clickTrackRunnable)
     }
 
+    //очищает историю поиска
     private fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
         adapter.setTrackList(emptyList())
         updateUI()
     }
 
+    //обновляет интерфейс, если история поиска пуста и наоборот
     private fun updateUI() {
         val history = searchHistory.getSearchHistory()
 
@@ -189,39 +178,40 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideSearchUI(){
+    //скрытие интерфейса
+    private fun hideSearchUI() {
         adapter.setTrackList(emptyList())
         historyContainer.visibility = View.GONE
         clearHistoryButton.visibility = View.GONE
 
     }
 
-    private fun searchDebounce(){
+    //задержка при выполнении запроса
+    private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
-    private fun handleClick(clickedTrack: Track){
+
+    // Переход с элемента поиска на экран Аудиоплеера
+    private fun handleClick(clickedTrack: Track) {
         val intent = Intent(this, AudioPlayer::class.java)
         intent.putExtra(TRACK_KEY, clickedTrack)
         startActivity(intent)
     }
+
+    //Задержка для поочередного нажатия на элемент в списке
     private fun trackDebounce(): Boolean {
-            val current = isClickAllowed
-            if (isClickAllowed) {
-                isClickAllowed = false
-                handler.removeCallbacks(clickTrackRunnable)
-                handler.postDelayed({
-                    // Здесь должна быть ваша логика обработки клика
-                    val localClickedTrack = clickedTrack
-                    if (localClickedTrack != null) {
-                        handleClick(localClickedTrack)
-                    }
-                    isClickAllowed = true
-                }, CLICK_DEBOUNCE_DELAY)
-            }
-            return current
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({
+                isClickAllowed = true
+            }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
+    //метод для выполнения запроса и его обработки
     private fun performSearch(query: String) {
         if (query.isBlank()) {
             return
@@ -259,7 +249,7 @@ class SearchActivity : AppCompatActivity() {
                     updateUI()
                 }
             }
-
+            //обработка запроса при ошибке
             override fun onFailure(call: Call<SongResponse>, t: Throwable) {
                 lastSearchQuery = query
                 imageHolder.visibility = View.VISIBLE
@@ -272,6 +262,7 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+    //метод для отображения элементов
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String, additionalMessage: String) {
         if (text.isNotEmpty()) {
@@ -284,10 +275,17 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    //обработка нажатия на элемент в списке
+    override fun onTrackClicked(track: Track) {
+        if (trackDebounce()) {
+            handleClick(track)
+        }
+    }
 
+    //установка ресайклера в активити и активация адаптера
     private fun setupRecyclerView() {
         val sh = searchHistory.getSearchHistory()
-        adapter = TrackAdapter(sh, searchHistory)
+        adapter = TrackAdapter(sh, searchHistory, this)
         searchHistory.getSearchHistory()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -300,7 +298,7 @@ class SearchActivity : AppCompatActivity() {
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethod.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
-
+    //метод для скрытия клавиатуры
     private fun hideSoftKeyboard() {
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethod.hideSoftInputFromWindow(inputEditText.windowToken, 0)
@@ -310,22 +308,22 @@ class SearchActivity : AppCompatActivity() {
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
-
+    //метод для сохранения текста при пересоздании активити
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(PRODUCT_AMOUNT, inputEditText.text.toString())
     }
-
+    //метод для сохранения текста при пересоздании активити
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         savedText = savedInstanceState.getString(PRODUCT_AMOUNT, "")
         inputEditText.setText(savedText)
     }
-
+    //константы
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1500L
+        private const val SEARCH_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
         const val TRACK_KEY = "track"
     }
 }
