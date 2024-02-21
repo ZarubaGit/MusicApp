@@ -1,10 +1,11 @@
-package com.example.playlistmaker
-import SearchHistory
-import android.content.Intent
-import android.util.Log
+package com.example.playlistmaker.ui
+import com.example.playlistmaker.data.dto.SearchHistory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.TrackClickListener
+import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter(
     val trackList: MutableList<Track>,

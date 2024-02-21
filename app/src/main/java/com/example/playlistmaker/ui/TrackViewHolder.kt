@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Context
 import android.util.TypedValue
@@ -8,10 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.utils.DpToPx
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), DpToPx {
     private val trackNameTextView: TextView = itemView.findViewById(R.id.trackNameTextView)
     private val artistNameTextView: TextView = itemView.findViewById(R.id.artistNameTextView)
     private val trackTimeTextView: TextView = itemView.findViewById(R.id.trackTimeTextView)
@@ -33,7 +36,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(artworkImageView)
     }
 
-     fun dpToPx(dp: Float, context: Context): Int {
+     override fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.audioPlayer
 
 
 import android.content.Context
@@ -7,18 +7,21 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.domain.PlayPauseUseCase
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.utils.DpToPx
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class AudioPlayer : AppCompatActivity() {
+class AudioPlayer : AppCompatActivity(), DpToPx {
 
     private lateinit var backButton: ImageView
     private lateinit var artworkImageView: ImageView
@@ -39,6 +42,7 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var pauseButton: Button
     private val formatTime by lazy {SimpleDateFormat("mm:ss", Locale.getDefault())}
     private val formatYear by lazy {SimpleDateFormat("yyyy", Locale.getDefault())}
+    private val playPauseUseCase = PlayPauseUseCase()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -66,13 +70,13 @@ class AudioPlayer : AppCompatActivity() {
         handler = Handler()
 
         playButton.setOnClickListener {
-            if(isPlaying){
+            val playing = playPauseUseCase.playingPause()
+            if(playing){
                 mediaPlayer.pause()
             } else {
                 mediaPlayer.start()
                 handler.post(updateTimeRunnable)
             }
-            isPlaying = !isPlaying
             updatePlayButtonImage()
         }
 
@@ -107,13 +111,7 @@ class AudioPlayer : AppCompatActivity() {
             yearRightSide.text = releaseYear ?: ""
             primaryGenreName.text = track.primaryGenreName ?: ""
             countryRightSide.text = track.country ?: ""
-            Glide.with(this)
-                .load(track.getCoverArtwork())
-                .centerCrop()
-                .transform((RoundedCorners(dpToPx(15f, this@AudioPlayer))))
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .into(artworkImageView)
+            biblGlide(track = track)
             mediaPlayer = MediaPlayer().apply {
                 val trackUrl = Uri.parse(track.previewUrl)
                 setDataSource(this@AudioPlayer, trackUrl)
@@ -144,7 +142,17 @@ class AudioPlayer : AppCompatActivity() {
         }
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun biblGlide(track: Track?){
+        Glide.with(this)
+            .load(track?.getCoverArtwork())
+            .centerCrop()
+            .transform((RoundedCorners(dpToPx(15f, this@AudioPlayer))))
+            .placeholder(R.drawable.placeholder)
+            .error(R.drawable.placeholder)
+            .into(artworkImageView)
+    }
+
+    override fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
@@ -153,10 +161,10 @@ class AudioPlayer : AppCompatActivity() {
     }
 
     private fun updatePlayButtonImage(){
-        if(isPlaying){
-            playButton.setImageResource(R.drawable.button_pause)
-        } else {
+        if(playPauseUseCase.isPlaying){
             playButton.setImageResource(R.drawable.button_play)
+        } else {
+            playButton.setImageResource(R.drawable.button_pause)
         }
     }
     companion object {

@@ -1,6 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
-import SearchHistory
+import com.example.playlistmaker.data.dto.SearchHistory
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +9,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -21,7 +20,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.data.network.ApiSong
+import com.example.playlistmaker.ui.audioPlayer.AudioPlayer
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.TrackSearchResponse
+import com.example.playlistmaker.presentation.TrackClickListener
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -218,9 +223,10 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         }
         progressBar.visibility = View.VISIBLE
         hideSearchUI()
-        iTunseService.search(query).enqueue(object : Callback<SongResponse> {
+        iTunseService.search(query).enqueue(object : Callback<TrackSearchResponse> {
             @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
+            override fun onResponse(call: Call<TrackSearchResponse>,
+                                    response: Response<TrackSearchResponse>) {
                 val bodyResponse = response.body()?.results
                 if (response.isSuccessful) {
                     trackList.clear()
@@ -250,7 +256,7 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
                 }
             }
             //обработка запроса при ошибке
-            override fun onFailure(call: Call<SongResponse>, t: Throwable) {
+            override fun onFailure(call: Call<TrackSearchResponse>, t: Throwable) {
                 lastSearchQuery = query
                 imageHolder.visibility = View.VISIBLE
                 imageHolder.setImageResource(R.drawable.network_error)
@@ -261,6 +267,7 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
             }
         })
     }
+
 
     //метод для отображения элементов
     @SuppressLint("NotifyDataSetChanged")

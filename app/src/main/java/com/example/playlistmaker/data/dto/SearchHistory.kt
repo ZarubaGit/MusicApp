@@ -1,14 +1,16 @@
+package com.example.playlistmaker.data.dto
+
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class SearchHistory(context: Context) {
 
     companion object {
-        private const val PREF_NAME = "SearchHistory"
+        private const val PREF_NAME = "com.example.playlistmaker.data.dto.SearchHistory"
         private const val KEY_HISTORY = "history"
         private const val MAX_HISTORY_SIZE = 10
     }

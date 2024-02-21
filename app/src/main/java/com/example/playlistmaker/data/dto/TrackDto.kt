@@ -1,8 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
 import java.io.Serializable
 
-data class Track(
+data class TrackDto(
     val trackId: Int,
     val trackName: String,
     val artistName: String,
