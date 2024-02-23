@@ -1,10 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.R
 
 const val FILE_FOR_SAVED = "file_for_saved"
 const val DARK_THEME_MODE = "setting_saves"
