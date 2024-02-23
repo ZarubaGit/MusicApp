@@ -21,28 +21,29 @@ import com.example.playlistmaker.domain.utils.DpToPx
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class AudioPlayer : AppCompatActivity(), DpToPx {
+class AudioPlayer : AppCompatActivity() {
 
-    private lateinit var backButton: ImageView
-    private lateinit var artworkImageView: ImageView
-    private lateinit var nameTrackTextView: TextView
-    private lateinit var artistNameTextView: TextView
-    private lateinit var trackTime: TextView
-    private lateinit var minAndSecTrack: TextView
-    private lateinit var nameOfAlbum: TextView
-    private lateinit var yearRightSide: TextView
-    private lateinit var primaryGenreName: TextView
-    private lateinit var countryRightSide: TextView
+    private var backButton: ImageView? = null
+    private var artworkImageView: ImageView? = null
+    private var nameTrackTextView: TextView? = null
+    private var artistNameTextView: TextView? = null
+    private var trackTime: TextView? = null
+    private var minAndSecTrack: TextView? = null
+    private var nameOfAlbum: TextView? = null
+    private var yearRightSide: TextView? = null
+    private var primaryGenreName: TextView? = null
+    private var countryRightSide: TextView? = null
     private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var playButton: ImageView
+    private var playButton: ImageView? = null
     private lateinit var handler: Handler
     private var isPlaying: Boolean = false
     private lateinit var updateTimeRunnable: Runnable
-    private lateinit var pauseButton: Button
-    private val formatTime by lazy {SimpleDateFormat("mm:ss", Locale.getDefault())}
-    private val formatYear by lazy {SimpleDateFormat("yyyy", Locale.getDefault())}
+    private var pauseButton: Button? = null
+    private val formatTime by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
+    private val formatYear by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
     private val playPauseUseCase = PlayPauseUseCase()
+    private val convert = DpToPx()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -51,7 +52,7 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
 
         backButton = binding.backInSearch
         artworkImageView = binding.artworkImageView
-        artworkImageView.setImageResource(R.drawable.placeholder)
+        artworkImageView?.setImageResource(R.drawable.placeholder)
         nameTrackTextView = binding.nameTrackTextView
         artistNameTextView = binding.artistNameTextView
         trackTime = binding.trackTime
@@ -69,7 +70,7 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
 
         handler = Handler()
 
-        playButton.setOnClickListener {
+        playButton?.setOnClickListener {
             val playing = playPauseUseCase.playingPause()
             if(playing){
                 mediaPlayer.pause()
@@ -80,7 +81,7 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
             updatePlayButtonImage()
         }
 
-        backButton.setOnClickListener {
+        backButton?.setOnClickListener {
             mediaPlayer.release()
             handler.removeCallbacks(updateTimeRunnable)
             finish()
@@ -94,7 +95,7 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
 
     }
 
-    fun dataAssignment(track: Track?) {
+    private fun dataAssignment(track: Track?) {
         if (track != null) {
             val formattedTime = formatTime
                 .format(track.trackTimeMillis)
@@ -103,42 +104,49 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
             } else {
                 ""
             }
-            minAndSecTrack.text = formattedTime
-            trackTime.text = formattedTime
-            nameTrackTextView.text = track.trackName
-            artistNameTextView.text = track.artistName
-            nameOfAlbum.text = track.collectionName ?: ""
-            yearRightSide.text = releaseYear ?: ""
-            primaryGenreName.text = track.primaryGenreName ?: ""
-            countryRightSide.text = track.country ?: ""
+            minAndSecTrack?.text = formattedTime
+            trackTime?.text = formattedTime
+            nameTrackTextView?.text = track.trackName
+            artistNameTextView?.text = track.artistName
+            nameOfAlbum?.text = track.collectionName ?: ""
+            yearRightSide?.text = releaseYear ?: ""
+            primaryGenreName?.text = track.primaryGenreName ?: ""
+            countryRightSide?.text = track.country ?: ""
             biblGlide(track = track)
-            mediaPlayer = MediaPlayer().apply {
-                val trackUrl = Uri.parse(track.previewUrl)
-                setDataSource(this@AudioPlayer, trackUrl)
-                prepareAsync()
-                setOnPreparedListener {
-                    start()
-                    handler.post(updateTimeRunnable)
-                    this@AudioPlayer.isPlaying = true
-                    updatePlayButtonImage()
-                }
-                setOnCompletionListener {
-                    this@AudioPlayer.isPlaying = false
-                    updatePlayButtonImage()
-                    handler.removeCallbacks(updateTimeRunnable)
-                }
-            }
-            updateTimeRunnable = object :Runnable{
-                override fun run() {
-                    if(mediaPlayer.isPlaying && mediaPlayer != null){
-                        val currentPosition = mediaPlayer.currentPosition
-                        trackTime.text = formatTime
-                            .format(currentPosition)
-                        handler.postDelayed(this, TIME_IS_SECOND)
-                    }
-                }
-            }
+            mediaPlayerImpl(track)
+            updateTime()
+        }
+    }
 
+    private fun mediaPlayerImpl(track: Track){
+        mediaPlayer = MediaPlayer().apply {
+            val trackUrl = Uri.parse(track.previewUrl)
+            setDataSource(this@AudioPlayer, trackUrl)
+            prepareAsync()
+            setOnPreparedListener {
+                start()
+                handler.post(updateTimeRunnable)
+                this@AudioPlayer.isPlaying = true
+                updatePlayButtonImage()
+            }
+            setOnCompletionListener {
+                this@AudioPlayer.isPlaying = false
+                updatePlayButtonImage()
+                handler.removeCallbacks(updateTimeRunnable)
+            }
+        }
+    }
+
+    private fun updateTime(){
+        updateTimeRunnable = object :Runnable{
+            override fun run() {
+                if(mediaPlayer.isPlaying && mediaPlayer != null){
+                    val currentPosition = mediaPlayer.currentPosition
+                    trackTime?.text = formatTime
+                        .format(currentPosition)
+                    handler.postDelayed(this, TIME_IS_SECOND)
+                }
+            }
         }
     }
 
@@ -146,25 +154,17 @@ class AudioPlayer : AppCompatActivity(), DpToPx {
         Glide.with(this)
             .load(track?.getCoverArtwork())
             .centerCrop()
-            .transform((RoundedCorners(dpToPx(15f, this@AudioPlayer))))
+            .transform((RoundedCorners(convert.dpToPx(15f, this@AudioPlayer))))
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
-            .into(artworkImageView)
-    }
-
-    override fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics
-        ).toInt()
+            .into(artworkImageView!!)
     }
 
     private fun updatePlayButtonImage(){
         if(playPauseUseCase.isPlaying){
-            playButton.setImageResource(R.drawable.button_play)
+            playButton?.setImageResource(R.drawable.button_play)
         } else {
-            playButton.setImageResource(R.drawable.button_pause)
+            playButton?.setImageResource(R.drawable.button_pause)
         }
     }
     companion object {

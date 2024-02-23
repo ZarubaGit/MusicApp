@@ -42,25 +42,25 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val iTunseService = retrofit.create(ApiSong::class.java)
+    private val iTunesService = retrofit.create(ApiSong::class.java)
     private val trackList = mutableListOf<Track>()
-    private lateinit var inputEditText: EditText
-    private lateinit var clearButton: ImageView
-    private lateinit var linearLayout: LinearLayout
-    private lateinit var savedText: String
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var backButton: ImageView
+    private var inputEditText: EditText? = null
+    private var clearButton: ImageView? = null
+    private var linearLayout: LinearLayout? = null
+    private var savedText: String? = null
+    private var recyclerView: RecyclerView? = null
+    private var backButton: ImageView? = null
     private lateinit var adapter: TrackAdapter
-    private lateinit var imageHolder: ImageView
-    private lateinit var textHolderMessage: TextView
-    private lateinit var udpateButton: Button
+    private var imageHolder: ImageView? = null
+    private var textHolderMessage: TextView? = null
+    private var updateButton: Button? = null
     private lateinit var searchHistory: SearchHistory
-    private lateinit var clearHistoryButton: Button
+    private var clearHistoryButton: Button? = null
     private var lastSearchQuery: String? = null
     private lateinit var historyContainer: LinearLayout
     private lateinit var binding: ActivitySearchBinding
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { performSearch(inputEditText.text.toString()) }
+    private val searchRunnable = Runnable { inputEditText?.text?.toString()?.let { performSearch(it) } }
     private lateinit var progressBar: ProgressBar
     private var isClickAllowed: Boolean = true
 
@@ -77,7 +77,7 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         backButton = binding.backInMain
         recyclerView = binding.recyclerView
         textHolderMessage = binding.placeholderMessage
-        udpateButton = binding.refreshButton
+        updateButton = binding.refreshButton
         imageHolder = binding.imageHolder
         searchHistory = SearchHistory(this)
         clearHistoryButton = binding.clearHistoryButton
@@ -85,19 +85,19 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         progressBar = binding.progressBar
 
         //обработка нажатия по очистке истории поиска
-        clearHistoryButton.setOnClickListener {
+        clearHistoryButton?.setOnClickListener {
             clearSearchHistory()
         }
 
         setupRecyclerView()
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
+        clearButton?.setOnClickListener {
+            inputEditText?.setText("")
             hideSoftKeyboard()
-            clearButton.visibility = View.GONE
-            textHolderMessage.visibility = View.GONE
-            imageHolder.visibility = View.GONE
+            clearButton?.visibility = View.GONE
+            textHolderMessage?.visibility = View.GONE
+            imageHolder?.visibility = View.GONE
             adapter.setTrackList(trackList = searchHistory.getSearchHistory())
             adapter.notifyDataSetChanged()
         }
@@ -107,18 +107,18 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                clearButton?.visibility = clearButtonVisibility(s)
                 updateUI()
                 searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
+        inputEditText?.addTextChangedListener(simpleTextWatcher)
 
 
         // Обработка нажатия на поле ввода для отображения клавиатуры
-        inputEditText.setOnClickListener {
+        inputEditText?.setOnClickListener {
 //            inputEditText.text.clear()
             showSoftKeyboard()
 
@@ -126,15 +126,15 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         }
 
         //кнопка обновить запрос при отсутствии соединения
-        udpateButton.setOnClickListener {
+        updateButton?.setOnClickListener {
             val query = lastSearchQuery
             if (query != null) {
                 performSearch(query)
             }
         }
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            val input = inputEditText.text.toString()
+        inputEditText?.setOnEditorActionListener { _, actionId, _ ->
+            val input = inputEditText?.text.toString()
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(input)
                 lastSearchQuery = input
@@ -143,13 +143,13 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
             return@setOnEditorActionListener false
         }
 
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+        inputEditText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 hideSearchUI()
             }
         }
         // Обработка нажатия на кнопку "Назад"
-        backButton.setOnClickListener {
+        backButton?.setOnClickListener {
             finish()
         }
     }
@@ -170,14 +170,15 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
     //обновляет интерфейс, если история поиска пуста и наоборот
     private fun updateUI() {
         val history = searchHistory.getSearchHistory()
-
         if (history.isNotEmpty()) {
             historyContainer.visibility = View.VISIBLE
-            clearHistoryButton.visibility = View.VISIBLE
-            udpateButton.visibility = View.GONE
+            clearHistoryButton?.visibility = View.VISIBLE
+            updateButton?.visibility = View.GONE
+            imageHolder?.visibility = View.GONE
+            showMessage("", "")
             adapter.setTrackList(history)  // Обновление данных в адаптере
         } else {
-            clearHistoryButton.visibility = View.GONE
+            clearHistoryButton?.visibility = View.GONE
             historyContainer.visibility = View.GONE
             progressBar.visibility = View.GONE
         }
@@ -187,7 +188,7 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
     private fun hideSearchUI() {
         adapter.setTrackList(emptyList())
         historyContainer.visibility = View.GONE
-        clearHistoryButton.visibility = View.GONE
+        clearHistoryButton?.visibility = View.GONE
 
     }
 
@@ -223,7 +224,7 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         }
         progressBar.visibility = View.VISIBLE
         hideSearchUI()
-        iTunseService.search(query).enqueue(object : Callback<TrackSearchResponse> {
+        iTunesService.search(query).enqueue(object : Callback<TrackSearchResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<TrackSearchResponse>,
                                     response: Response<TrackSearchResponse>) {
@@ -235,19 +236,19 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
                         trackList.addAll(bodyResponse)
                         adapter.setTrackList(trackList)
                         adapter.notifyDataSetChanged()
-                        recyclerView.visibility = View.VISIBLE
+                        recyclerView?.visibility = View.VISIBLE
                     }
                     if (trackList.isEmpty()) {
-                        imageHolder.visibility = View.VISIBLE
-                        imageHolder.setImageResource(R.drawable.nothing_to_search)
+                        imageHolder?.visibility = View.VISIBLE
+                        imageHolder?.setImageResource(R.drawable.nothing_to_search)
                         showMessage(getString(R.string.nothing_find), "")
                     } else {
                         showMessage("", "")
                     }
-                    udpateButton.visibility = View.GONE
+                    updateButton?.visibility = View.GONE
                 } else {
                     lastSearchQuery = query
-                    imageHolder.visibility = View.VISIBLE
+                    imageHolder?.visibility = View.VISIBLE
                     showMessage(
                         getString(R.string.trouble_with_network),
                         response.code().toString()
@@ -258,10 +259,10 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
             //обработка запроса при ошибке
             override fun onFailure(call: Call<TrackSearchResponse>, t: Throwable) {
                 lastSearchQuery = query
-                imageHolder.visibility = View.VISIBLE
-                imageHolder.setImageResource(R.drawable.network_error)
+                imageHolder?.visibility = View.VISIBLE
+                imageHolder?.setImageResource(R.drawable.network_error)
                 showMessage(getString(R.string.trouble_with_network), t.message.toString())
-                udpateButton.visibility = View.VISIBLE
+                updateButton?.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
                 hideSearchUI()
             }
@@ -273,12 +274,12 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String, additionalMessage: String) {
         if (text.isNotEmpty()) {
-            textHolderMessage.visibility = View.VISIBLE
+            textHolderMessage?.visibility = View.VISIBLE
             trackList.clear()
             adapter.notifyDataSetChanged()
-            textHolderMessage.text = text
+            textHolderMessage?.text = text
         } else {
-            textHolderMessage.visibility = View.GONE
+            textHolderMessage?.visibility = View.GONE
         }
     }
 
@@ -294,21 +295,21 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
         val sh = searchHistory.getSearchHistory()
         adapter = TrackAdapter(sh, searchHistory, this)
         searchHistory.getSearchHistory()
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        recyclerView?.layoutManager = LinearLayoutManager(this)
+        recyclerView?.adapter = adapter
         updateUI()
     }
 
     // Метод для отображения клавиатуры
     private fun showSoftKeyboard() {
-        inputEditText.requestFocus()
+        inputEditText?.requestFocus()
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethod.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
     //метод для скрытия клавиатуры
     private fun hideSoftKeyboard() {
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethod.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+        inputMethod.hideSoftInputFromWindow(inputEditText?.windowToken, 0)
     }
 
     // Метод для определения видимости кнопки "Очистить поисковый запрос"
@@ -318,13 +319,13 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
     //метод для сохранения текста при пересоздании активити
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(PRODUCT_AMOUNT, inputEditText.text.toString())
+        outState.putString(PRODUCT_AMOUNT, inputEditText?.text.toString())
     }
     //метод для сохранения текста при пересоздании активити
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         savedText = savedInstanceState.getString(PRODUCT_AMOUNT, "")
-        inputEditText.setText(savedText)
+        inputEditText?.setText(savedText)
     }
     //константы
     companion object {
