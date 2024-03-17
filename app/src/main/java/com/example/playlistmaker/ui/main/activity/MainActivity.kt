@@ -1,22 +1,22 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.main.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.MediatekaActivity
+import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.ui.setting.activity.SettingsActivity
 
-const val FILE_FOR_SAVED = "file_for_saved"
-const val DARK_THEME_MODE = "setting_saves"
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreference = getSharedPreferences(FILE_FOR_SAVED, MODE_PRIVATE)
-        val darkTheme = sharedPreference.getBoolean(DARK_THEME_MODE, false)
-        setAppTheme(darkTheme)
 
         setContentView(R.layout.activity_main)
 
@@ -36,15 +36,5 @@ class MainActivity : AppCompatActivity() {
             val displaySettings = Intent(this, SettingsActivity::class.java)
             startActivity(displaySettings)
         }
-    }
-
-    private fun setAppTheme(darkThemeEnable: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnable) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
     }
 }

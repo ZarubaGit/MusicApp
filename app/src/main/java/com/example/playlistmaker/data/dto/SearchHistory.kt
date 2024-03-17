@@ -2,7 +2,6 @@ package com.example.playlistmaker.data.dto
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -10,9 +9,9 @@ import com.google.gson.reflect.TypeToken
 class SearchHistory(context: Context) {
 
     companion object {
-        private const val PREF_NAME = "com.example.playlistmaker.data.dto.SearchHistory"
-        private const val KEY_HISTORY = "history"
-        private const val MAX_HISTORY_SIZE = 10
+        const val PREF_NAME = "com.example.playlistmaker.data.dto.SearchHistory"
+        const val KEY_HISTORY = "history"
+        const val MAX_HISTORY_SIZE = 10
     }
 
     private val sharedPreferences: SharedPreferences =
@@ -21,7 +20,6 @@ class SearchHistory(context: Context) {
 
     fun getSearchHistory(): MutableList<Track> {
         val historyString = sharedPreferences.getString(KEY_HISTORY, null)
-        Log.d("SH", "getSearchHistory: $historyString")
         return if (historyString != null) {
             gson.fromJson(historyString, object : TypeToken<MutableList<Track>>() {}.type)
         } else {

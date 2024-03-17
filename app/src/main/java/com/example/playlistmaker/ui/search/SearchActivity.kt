@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
 import com.example.playlistmaker.data.dto.SearchHistory
 import android.annotation.SuppressLint
@@ -21,12 +21,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.data.network.ApiSong
-import com.example.playlistmaker.ui.audioPlayer.AudioPlayer
+import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.TrackSearchResponse
 import com.example.playlistmaker.presentation.TrackClickListener
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

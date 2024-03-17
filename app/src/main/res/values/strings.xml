@@ -33,5 +33,8 @@
     <string name="relise_year">Год</string>
     <string name="genreName">Жанр</string>
     <string name="country">Страна</string>
+    <string name="player_in_progress">Трек загружается</string>
+    <string name="timebar_start">00:00</string>
+
 
 </resources>
