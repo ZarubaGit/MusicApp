@@ -4,10 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.MediatekaActivity
+import com.example.playlistmaker.ui.media.MediatekaActivity
 import com.example.playlistmaker.ui.search.SearchActivity
 import com.example.playlistmaker.ui.setting.activity.SettingsActivity
 

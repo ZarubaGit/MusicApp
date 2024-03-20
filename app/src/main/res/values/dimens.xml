@@ -18,4 +18,6 @@
     <dimen name="dimen51">51sp</dimen>
     <dimen name="dimen100">100sp</dimen>
     <dimen name="dimen13">13sp</dimen>
+    <dimen name="dimen12dp">12dp</dimen>
+    <dimen name="dimen24dp">24dp</dimen>
 </resources>

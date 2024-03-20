@@ -56,6 +56,65 @@
 
     </LinearLayout>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:padding="0dp">
+
+        <LinearLayout
+            android:id="@+id/searchPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="@dimen/dimen12dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/you_searched"
+                android:textAlignment="center"
+                android:focusableInTouchMode="true"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="19sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/dimen12dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_track" />
+
+
+            <Button
+                android:id="@+id/clearHistoryButton"
+                style="@style/refreshButton"
+                android:layout_gravity="center"
+                android:layout_marginTop="0dp"
+                android:text="@string/clear_story"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:listitem="@layout/item_track"
+        android:paddingStart="@dimen/dimen12dp"
+        android:layout_marginTop="@dimen/dimen24dp" />
+
     <LinearLayout
         android:id="@+id/historyContainer"
         android:layout_width="match_parent"
@@ -65,7 +124,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/historyTitle"
+            android:id="@+id/historyTitle1"
             style="@style/TextFromToolBar"
             android:layout_gravity="center"
             android:text="@string/you_searched"
@@ -74,7 +133,7 @@
     </LinearLayout>
 
 
-    <ScrollView
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -106,7 +165,8 @@
                     android:text="@string/clear_story"/>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
+
 
     <LinearLayout
         android:layout_width="match_parent"

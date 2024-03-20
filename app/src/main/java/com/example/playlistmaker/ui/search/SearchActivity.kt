@@ -1,106 +1,78 @@
 package com.example.playlistmaker.ui.search
 
-import com.example.playlistmaker.data.dto.SearchHistory
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.data.network.ApiSong
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.dto.TrackSearchResponse
 import com.example.playlistmaker.presentation.TrackClickListener
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.TrackAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.presentation.TrackMapper
+import com.example.playlistmaker.presentation.searchViewModel.SearchViewModel
+import com.example.playlistmaker.databinding.ActivitySearchNewBinding
 
-class SearchActivity : AppCompatActivity(), TrackClickListener {
+class SearchActivity : AppCompatActivity() {
 
-    private val urlApi = "https://itunes.apple.com"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(urlApi)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ApiSong::class.java)
-    private val trackList = mutableListOf<Track>()
-    private var inputEditText: EditText? = null
-    private var clearButton: ImageView? = null
-    private var linearLayout: LinearLayout? = null
     private var savedText: String? = null
-    private var recyclerView: RecyclerView? = null
-    private var backButton: ImageView? = null
-    private lateinit var adapter: TrackAdapter
-    private var imageHolder: ImageView? = null
-    private var textHolderMessage: TextView? = null
-    private var updateButton: Button? = null
-    private lateinit var searchHistory: SearchHistory
-    private var clearHistoryButton: Button? = null
-    private var lastSearchQuery: String? = null
-    private lateinit var historyContainer: LinearLayout
-    private lateinit var binding: ActivitySearchBinding
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { inputEditText?.text?.toString()?.let { performSearch(it) } }
-    private lateinit var progressBar: ProgressBar
-    private var isClickAllowed: Boolean = true
+    private lateinit var trackAdapter: TrackAdapter
+    private lateinit var binding: ActivitySearchNewBinding
+    private lateinit var previousRequest: String
+    private val simpleTextWatcher: TextWatcher? = null
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var searchResultsAdapter: TrackAdapter
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
+        binding = ActivitySearchNewBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        inputEditText = binding.inputEditText
-        clearButton = binding.clearIcon
-        linearLayout = binding.container
-        backButton = binding.backInMain
-        recyclerView = binding.recyclerView
-        textHolderMessage = binding.placeholderMessage
-        updateButton = binding.refreshButton
-        imageHolder = binding.imageHolder
-        searchHistory = SearchHistory(this)
-        clearHistoryButton = binding.clearHistoryButton
-        historyContainer = binding.historyContainer
-        progressBar = binding.progressBar
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
 
-        //обработка нажатия по очистке истории поиска
-        clearHistoryButton?.setOnClickListener {
-            clearSearchHistory()
+        viewModel.observeState().observe(this) {
+            render(it)
         }
 
-        setupRecyclerView()
+        viewModel.observeHistoryState().observe(this ) {
+            showSearchHistory(it)
+        }
+
+        trackAdapter = TrackAdapter(setAdapterListener())
+        searchResultsAdapter = TrackAdapter(setAdapterListener())
+
+        binding.recyclerTracks.adapter = trackAdapter
+        binding.recyclerSearch.adapter = searchResultsAdapter
+
+
+        //обработка нажатия по очистке истории поиска
+        binding.clearHistoryButton.setOnClickListener {
+            viewModel.clearHistory()
+            searchResultsAdapter.trackList.clear()
+            searchResultsAdapter.notifyDataSetChanged()
+            binding.searchPrefs.visibility = View.GONE
+        }
+
 
         // Установка обработчика для кнопки "Очистить поисковый запрос"
-        clearButton?.setOnClickListener {
-            inputEditText?.setText("")
+        binding.clearIcon.setOnClickListener {
+            binding.inputEditText.setText("")
             hideSoftKeyboard()
-            clearButton?.visibility = View.GONE
-            textHolderMessage?.visibility = View.GONE
-            imageHolder?.visibility = View.GONE
-            adapter.setTrackList(trackList = searchHistory.getSearchHistory())
-            adapter.notifyDataSetChanged()
+            binding.clearIcon.visibility = View.GONE
+            binding.inputEditText.clearFocus()
+            clearContent()
         }
 
         // Установка TextWatcher для поля ввода
@@ -108,231 +80,192 @@ class SearchActivity : AppCompatActivity(), TrackClickListener {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton?.visibility = clearButtonVisibility(s)
-                updateUI()
-                searchDebounce()
+                if (!s.isNullOrEmpty()) {
+                    binding.recyclerTracks.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
+                    binding.placeholderMessage.visibility = View.GONE
+                    binding.refreshButton.visibility = View.GONE
+                    binding.imageHolder.visibility = View.GONE
+                    binding.searchPrefs.visibility = View.GONE
+                    binding.clearIcon.visibility = View.VISIBLE
+                }
+                previousRequest = s?.toString() ?: ""
+                viewModel.searchDebounce(changedText = previousRequest)
+                //binding.searchPrefs.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true) View.GONE else View.VISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
-        inputEditText?.addTextChangedListener(simpleTextWatcher)
+        simpleTextWatcher.let { binding.inputEditText.addTextChangedListener(it) }
+
 
 
         // Обработка нажатия на поле ввода для отображения клавиатуры
-        inputEditText?.setOnClickListener {
-//            inputEditText.text.clear()
+        binding.inputEditText.setOnClickListener {
             showSoftKeyboard()
-
-            // Показ клавиатуры
         }
 
         //кнопка обновить запрос при отсутствии соединения
-        updateButton?.setOnClickListener {
-            val query = lastSearchQuery
-            if (query != null) {
-                performSearch(query)
-            }
+        binding.refreshButton.setOnClickListener {
+            binding.inputEditText.setText(previousRequest)
+            viewModel.searchDebounce(previousRequest)
         }
 
-        inputEditText?.setOnEditorActionListener { _, actionId, _ ->
-            val input = inputEditText?.text.toString()
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch(input)
-                lastSearchQuery = input
-                return@setOnEditorActionListener true
+                if (binding.inputEditText.text.isNotEmpty()) {
+                    previousRequest = binding.inputEditText.text.toString()
+                    viewModel.searchDebounce(binding.inputEditText.text.toString())
+
+                }
             }
-            return@setOnEditorActionListener false
+            false
         }
 
-        inputEditText?.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                hideSearchUI()
-            }
+        binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            viewModel.getSearchHistory()
+            binding.searchPrefs.visibility =
+                if (hasFocus && binding.inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
         }
         // Обработка нажатия на кнопку "Назад"
-        backButton?.setOnClickListener {
+        binding.backInMain.setOnClickListener {
             finish()
         }
     }
 
-    //удаляем Раннаблы из списка задач, чтобы не словить утечку ресурсов
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(searchRunnable)
+        simpleTextWatcher?.let { binding.inputEditText.removeTextChangedListener(it) }
     }
 
-    //очищает историю поиска
-    private fun clearSearchHistory() {
-        searchHistory.clearSearchHistory()
-        adapter.setTrackList(emptyList())
-        updateUI()
+    private fun clearContent() {
+        trackAdapter.trackList.clear()
+        trackAdapter.notifyDataSetChanged()
     }
 
-    //обновляет интерфейс, если история поиска пуста и наоборот
-    private fun updateUI() {
-        val history = searchHistory.getSearchHistory()
-        if (history.isNotEmpty()) {
-            historyContainer.visibility = View.VISIBLE
-            clearHistoryButton?.visibility = View.VISIBLE
-            updateButton?.visibility = View.GONE
-            imageHolder?.visibility = View.GONE
-            showMessage("", "")
-            adapter.setTrackList(history)  // Обновление данных в адаптере
-        } else {
-            clearHistoryButton?.visibility = View.GONE
-            historyContainer.visibility = View.GONE
-            progressBar.visibility = View.GONE
-        }
-    }
-
-    //скрытие интерфейса
-    private fun hideSearchUI() {
-        adapter.setTrackList(emptyList())
-        historyContainer.visibility = View.GONE
-        clearHistoryButton?.visibility = View.GONE
-
-    }
-
-    //задержка при выполнении запроса
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    // Переход с элемента поиска на экран Аудиоплеера
-    private fun handleClick(clickedTrack: Track) {
-        val intent = Intent(this, AudioPlayer::class.java)
-        intent.putExtra(TRACK_KEY, clickedTrack)
-        startActivity(intent)
-    }
-
-    //Задержка для поочередного нажатия на элемент в списке
-    private fun trackDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({
-                isClickAllowed = true
-            }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    //метод для выполнения запроса и его обработки
-    private fun performSearch(query: String) {
-        if (query.isBlank()) {
-            return
-        }
-        progressBar.visibility = View.VISIBLE
-        hideSearchUI()
-        iTunesService.search(query).enqueue(object : Callback<TrackSearchResponse> {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(call: Call<TrackSearchResponse>,
-                                    response: Response<TrackSearchResponse>) {
-                val bodyResponse = response.body()?.results
-                if (response.isSuccessful) {
-                    trackList.clear()
-                    progressBar.visibility = View.GONE
-                    if (bodyResponse?.isNotEmpty() == true) {
-                        trackList.addAll(bodyResponse)
-                        adapter.setTrackList(trackList)
-                        adapter.notifyDataSetChanged()
-                        recyclerView?.visibility = View.VISIBLE
-                    }
-                    if (trackList.isEmpty()) {
-                        imageHolder?.visibility = View.VISIBLE
-                        imageHolder?.setImageResource(R.drawable.nothing_to_search)
-                        showMessage(getString(R.string.nothing_find), "")
-                    } else {
-                        showMessage("", "")
-                    }
-                    updateButton?.visibility = View.GONE
-                } else {
-                    lastSearchQuery = query
-                    imageHolder?.visibility = View.VISIBLE
-                    showMessage(
-                        getString(R.string.trouble_with_network),
-                        response.code().toString()
-                    )
-                    updateUI()
-                }
-            }
-            //обработка запроса при ошибке
-            override fun onFailure(call: Call<TrackSearchResponse>, t: Throwable) {
-                lastSearchQuery = query
-                imageHolder?.visibility = View.VISIBLE
-                imageHolder?.setImageResource(R.drawable.network_error)
-                showMessage(getString(R.string.trouble_with_network), t.message.toString())
-                updateButton?.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
-                hideSearchUI()
-            }
-        })
-    }
-
-
-    //метод для отображения элементов
-    @SuppressLint("NotifyDataSetChanged")
-    private fun showMessage(text: String, additionalMessage: String) {
-        if (text.isNotEmpty()) {
-            textHolderMessage?.visibility = View.VISIBLE
-            trackList.clear()
-            adapter.notifyDataSetChanged()
-            textHolderMessage?.text = text
-        } else {
-            textHolderMessage?.visibility = View.GONE
-        }
-    }
-
-    //обработка нажатия на элемент в списке
-    override fun onTrackClicked(track: Track) {
-        if (trackDebounce()) {
-            handleClick(track)
-        }
-    }
-
-    //установка ресайклера в активити и активация адаптера
-    private fun setupRecyclerView() {
-        val sh = searchHistory.getSearchHistory()
-        adapter = TrackAdapter(sh, searchHistory, this)
-        searchHistory.getSearchHistory()
-        recyclerView?.layoutManager = LinearLayoutManager(this)
-        recyclerView?.adapter = adapter
-        updateUI()
-    }
 
     // Метод для отображения клавиатуры
     private fun showSoftKeyboard() {
-        inputEditText?.requestFocus()
+        binding.inputEditText.requestFocus()
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethod.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT)
+        inputMethod.showSoftInput(binding.inputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
     //метод для скрытия клавиатуры
     private fun hideSoftKeyboard() {
         val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethod.hideSoftInputFromWindow(inputEditText?.windowToken, 0)
+        inputMethod.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
     }
 
-    // Метод для определения видимости кнопки "Очистить поисковый запрос"
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-    }
     //метод для сохранения текста при пересоздании активити
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(PRODUCT_AMOUNT, inputEditText?.text.toString())
+        outState.putString(PRODUCT_AMOUNT, binding.inputEditText.text.toString())
     }
     //метод для сохранения текста при пересоздании активити
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         savedText = savedInstanceState.getString(PRODUCT_AMOUNT, "")
-        inputEditText?.setText(savedText)
+        binding.inputEditText.setText(savedText)
     }
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun setAdapterListener(): TrackClickListener {
+        return object : TrackClickListener {
+            override fun onTrackClicked(track: Track) {
+                // добавляем в историю поиска
+                viewModel.onClick(track)
+
+                // открываем аудиоплеер
+                val displayIntent = Intent(this@SearchActivity, AudioPlayer::class.java)
+                displayIntent.putExtra("track", TrackMapper.map(track))
+                startActivity(displayIntent)
+            }
+        }
+    }
+
+    private fun render(state: TrackState) {
+        when (state) {
+            is TrackState.Loading ->  showLoading()
+            is TrackState.Error -> showError()
+            is TrackState.Empty -> showEmpty()
+            is TrackState.Content -> showContent(state.tracks)
+        }
+    }
+
+    private fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.imageHolder.visibility = View.GONE
+        binding.placeholderMessage.visibility = View.GONE
+        binding.refreshButton.visibility = View.GONE
+        binding.searchPrefs.visibility = View.GONE
+        binding.recyclerTracks.visibility = View.GONE
+    }
+
+    private fun showError() {
+        binding.imageHolder.setImageResource(R.drawable.network_error)
+        binding.imageHolder.visibility = View.VISIBLE
+        binding.placeholderMessage.setText(R.string.trouble_with_network)
+        binding.placeholderMessage.visibility = View.VISIBLE
+        binding.imageHolder.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+        binding.searchPrefs.visibility = View.GONE
+        binding.recyclerTracks.visibility = View.GONE
+        binding.refreshButton.visibility = View.VISIBLE
+    }
+
+    private fun showEmpty() {
+        binding.imageHolder.setImageResource(R.drawable.nothing_to_search)
+        binding.placeholderMessage.setText(R.string.nothing_find)
+        binding.imageHolder.visibility = View.VISIBLE
+        binding.placeholderMessage.visibility = View.VISIBLE
+        binding.refreshButton.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.recyclerTracks.visibility = View.GONE
+        binding.searchPrefs.visibility = View.GONE
+
+    }
+
+    private fun showContent(newTracksList: List<Track>) {
+        trackAdapter.trackList.clear()
+        trackAdapter.trackList.addAll(newTracksList)
+        trackAdapter.notifyDataSetChanged()
+        binding.recyclerTracks.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+        binding.placeholderMessage.visibility = View.GONE
+        binding.refreshButton.visibility = View.GONE
+        binding.imageHolder.visibility = View.GONE
+        binding.searchPrefs.visibility = View.GONE
+    }
+
+    private fun showSearchHistory(track: ArrayList<Track> ) {
+        if (track.isEmpty()) {
+            binding.searchPrefs.visibility = View.GONE
+        }
+        else {
+            searchResultsAdapter.trackList = track
+            searchResultsAdapter.notifyDataSetChanged()
+            binding.recyclerSearch.visibility = View.VISIBLE
+            binding.recyclerTracks.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
+            binding.placeholderMessage.visibility = View.GONE
+            binding.imageHolder.visibility = View.GONE
+            binding.refreshButton.visibility = View.GONE
+            binding.searchPrefs.visibility = View.VISIBLE
+        }
+
+
+    }
+
+
+
     //константы
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
-        private const val SEARCH_DEBOUNCE_DELAY = 1000L
-        private const val CLICK_DEBOUNCE_DELAY = 500L
-        const val TRACK_KEY = "track"
     }
 }

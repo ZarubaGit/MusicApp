@@ -2,29 +2,23 @@ package com.example.playlistmaker.data
 
 import com.example.playlistmaker.data.dto.TrackSearchRequest
 import com.example.playlistmaker.data.dto.TrackSearchResponse
+import com.example.playlistmaker.data.mapper.TrackMapper
+import com.example.playlistmaker.domain.Resource
 import com.example.playlistmaker.domain.api.TrackRepository
 import com.example.playlistmaker.domain.models.Track
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
-    override fun search(text: String): List<Track> {
+    override fun search(text: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TrackSearchRequest(text))
-        if (response.resultCode == 200) {
-            return (response as TrackSearchResponse).results.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.trackTimeMillis,
-                    it.artworkUrl100,
-                    it.collectionName,
-                    it.country,
-                    it.releaseDate,
-                    it.primaryGenreName,
-                    it.previewUrl
-                )
+        return when (response.resultCode) {
+            200 -> {
+                Resource.Success((response as TrackSearchResponse).results.map { trackDto ->
+                    TrackMapper.map(trackDto = trackDto)
+                })
             }
-        } else {
-            return emptyList()
+            else -> {
+                Resource.Error(response.resultCode)
+            }
         }
     }
 }

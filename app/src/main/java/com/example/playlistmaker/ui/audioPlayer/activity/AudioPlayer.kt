@@ -48,10 +48,8 @@ class AudioPlayer : AppCompatActivity() {
         }
 
 
-        binding.minAndSecTrack.text = formatTime
-            .format(track.trackTimeMillis)
-        binding.trackTime.text = formatTime
-            .format(track.trackTimeMillis)
+        binding.minAndSecTrack.text = track.trackTimeMillis
+        binding.trackTime.text = track.trackTimeMillis
         artworkImageView = findViewById(R.id.artworkImageView)
         binding.nameTrackTextView.text = track.trackName
         binding.artistNameTextView.text = track.artistName
@@ -65,7 +63,7 @@ class AudioPlayer : AppCompatActivity() {
         binding.countryRightSide.text = track.country ?: ""
 
         Glide.with(this)
-            .load(track?.getCoverArtwork())
+            .load(track.getCoverArtwork())
             .centerCrop()
             .transform((RoundedCorners(convert.dpToPx(15f, this@AudioPlayer))))
             .placeholder(R.drawable.placeholder)
