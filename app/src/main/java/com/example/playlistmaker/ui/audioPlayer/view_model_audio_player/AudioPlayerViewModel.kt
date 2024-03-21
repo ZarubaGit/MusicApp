@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.view_model_audio_player
+package com.example.playlistmaker.ui.audioPlayer.view_model_audio_player
 
 
 

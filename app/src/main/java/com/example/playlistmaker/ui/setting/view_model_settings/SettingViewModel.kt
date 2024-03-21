@@ -1,35 +1,24 @@
-package com.example.playlistmaker.presentation.view_model_settings
+package com.example.playlistmaker.ui.setting.view_model_settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.domain.setting.SettingsInteractor
 import com.example.playlistmaker.domain.setting.model.ThemeSettings
+import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.util.Creator
 
-class SettingsViewModel(application: Application
-) : AndroidViewModel(application) {
+class SettingsViewModel(private val settingsInteractor: SettingsInteractor, private val sharingInteractor: SharingInteractor
+) : ViewModel() {
 
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
 
-    private val settingsInteractor by lazy {
-        Creator.provideSettingsInteractor(context = getApplication<Application>())
-    }
 
-    private val sharingInteractor by lazy {
-        Creator.provideSharingInteractor(context = getApplication<Application>())
-    }
-
-    fun updateThemeSettings(checked: Boolean) {
-        if (checked) {
+    fun updateThemeSettings(isChecked: Boolean) {
+         if (isChecked) {
             settingsInteractor.updateThemeSetting(ThemeSettings.DARK)
         } else {
             settingsInteractor.updateThemeSetting(ThemeSettings.LIGHT)

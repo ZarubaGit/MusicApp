@@ -1,36 +1,26 @@
-package com.example.playlistmaker.presentation.searchViewModel
+package com.example.playlistmaker.ui.search.searchViewModel
 
-import android.app.Application
+
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.ui.search.TrackState
-import com.example.playlistmaker.util.Creator
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel(private val trackInteractor: TrackInteractor, private val searchHistoryInteractor: SearchHistoryInteractor) : ViewModel() {
 
     companion object {
 
         private const val SEARCH_DEBOUNCE_DELAY = 1000L
         private val SEARCH_REQUEST_TOKEN = Any()
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application)
-            }
-        }
     }
 
-    private val trackInteractor by lazy { Creator.provideTracksInteractor(context = getApplication<Application>()) }
-    private val searchHistoryInteractor by lazy { Creator.provideSearchHistoryInteractor(context = getApplication<Application>()) }
     private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<TrackState>()

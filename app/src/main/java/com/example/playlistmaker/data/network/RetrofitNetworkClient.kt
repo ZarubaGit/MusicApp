@@ -9,7 +9,7 @@ import com.example.playlistmaker.data.dto.TrackSearchRequest
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
+class RetrofitNetworkClient(private val apiSong: ApiSong, private val context: Context ) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
@@ -19,7 +19,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
             return Response().apply { resultCode = 400 }
         }
 
-        val response = RetrofitClient.api.search(dto.text).execute()
+        val response = apiSong.search(dto.text).execute()
         val body = response.body() ?: Response()
 
         return body.apply { resultCode = response.code() }

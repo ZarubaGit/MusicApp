@@ -11,16 +11,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
 import com.example.playlistmaker.R
-import com.example.playlistmaker.presentation.TrackClickListener
-import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.TrackMapper
-import com.example.playlistmaker.presentation.searchViewModel.SearchViewModel
+import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
 import com.example.playlistmaker.databinding.ActivitySearchNewBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,7 +26,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchNewBinding
     private lateinit var previousRequest: String
     private val simpleTextWatcher: TextWatcher? = null
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
     private lateinit var searchResultsAdapter: TrackAdapter
 
     @SuppressLint("MissingInflatedId")
@@ -39,8 +35,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchNewBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) {
             render(it)
@@ -91,7 +85,6 @@ class SearchActivity : AppCompatActivity() {
                 }
                 previousRequest = s?.toString() ?: ""
                 viewModel.searchDebounce(changedText = previousRequest)
-                //binding.searchPrefs.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true) View.GONE else View.VISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {}

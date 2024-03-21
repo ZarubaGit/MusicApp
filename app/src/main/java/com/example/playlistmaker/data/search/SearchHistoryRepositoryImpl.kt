@@ -2,34 +2,33 @@ package com.example.playlistmaker.data.search
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.data.dto.SearchHistory
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(context: Context) : SearchHistoryRepository {
+class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) : SearchHistoryRepository {
 
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-    private val gson = Gson()
+
+    private var tracks = ArrayList<Track>()
+    private val editor: SharedPreferences.Editor = sharedPreferences.edit()
     override fun addTrack(track: Track) {
-        val history = getFromHistory().toMutableList()
-        val existingTrackIndex = history.indexOfFirst { it.trackId == track.trackId }
+        tracks = getFromHistory()
+        val existingTrackIndex = tracks.indexOfFirst { it.trackId == track.trackId }
 
         if (existingTrackIndex != -1) {
             // Если трек уже есть в истории, переместить его в верхнюю часть списка
-            history.removeAt(existingTrackIndex)
-            history.add(0, track)
+            tracks.removeAt(existingTrackIndex)
+            tracks.add(0, track)
         } else {
             // Если трека нет в истории, добавить его в начало списка
-            history.add(0, track)
+            tracks.add(0, track)
         }
         // Обрезать историю, если она превышает максимальный размер
-        if (history.size > MAX_HISTORY_SIZE) {
-            history.removeAt(history.size - 1)
+        if (tracks.size > MAX_HISTORY_SIZE) {
+            tracks.removeAt(tracks.size - 1)
         }
-        saveHistoryToPreferences(history)
+        saveHistoryToPreferences(tracks)
     }
 
     override fun getFromHistory(): ArrayList<Track> {
@@ -42,12 +41,12 @@ class SearchHistoryRepositoryImpl(context: Context) : SearchHistoryRepository {
     }
 
     override fun clearHistory() {
-        sharedPreferences.edit().remove(KEY_HISTORY).apply()
+        editor.remove(KEY_HISTORY).apply()
     }
 
     private fun saveHistoryToPreferences(history: MutableList<Track>) {
         val historyString = gson.toJson(history)
-        sharedPreferences.edit().putString(KEY_HISTORY, historyString).apply()
+        editor.putString(KEY_HISTORY, historyString).apply()
     }
 
     companion object {

@@ -11,7 +11,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.utils.DpToPx
-import com.example.playlistmaker.presentation.view_model_audio_player.AudioPlayerViewModel
+import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
 import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import java.io.Serializable
 import java.text.SimpleDateFormat
