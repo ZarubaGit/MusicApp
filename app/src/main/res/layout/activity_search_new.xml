@@ -9,7 +9,7 @@
         android:id="@+id/backInMain"
         style="@style/StrelochkaBack"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/dimen12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/light_mode" />
@@ -61,7 +61,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="@dimen/dimen12dp"
             android:src="@drawable/delete_icon"
             android:theme="@style/delete_icon"
             android:visibility="invisible" />
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center|top"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/dimen32dp"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -114,7 +114,7 @@
                 android:id="@+id/clearHistoryButton"
                 style="@style/refreshButton"
                 android:layout_gravity="center"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/betweenButton"
                 android:text="@string/clear_story" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -123,7 +123,7 @@
         android:id="@+id/recyclerTracks"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/dimen12dp"
         android:orientation="vertical"
         android:paddingStart="@dimen/dimen12dp"
         android:visibility="visible"
@@ -159,7 +159,7 @@
     <TextView
         android:id="@+id/placeholderMessage"
         style="@style/messageForSearchView"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/dimen12dp"
         app:layout_constraintEnd_toEndOf="@+id/imageHolder"
         app:layout_constraintStart_toStartOf="@+id/imageHolder"
         app:layout_constraintTop_toBottomOf="@+id/imageHolder" />
