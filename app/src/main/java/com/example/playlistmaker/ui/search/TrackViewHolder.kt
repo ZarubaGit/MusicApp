@@ -1,7 +1,5 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
-import android.content.Context
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,8 +22,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
-        trackTimeTextView.text = formattedTime
+        trackTimeTextView.text = track.trackTimeMillis
 
 
         Glide.with(itemView)

@@ -1,30 +1,44 @@
-package com.example.playlistmaker.ui
-import com.example.playlistmaker.data.dto.SearchHistory
+package com.example.playlistmaker.ui.search
+
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.presentation.TrackClickListener
 import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter(
-    val trackList: MutableList<Track>,
-    private val historyManager: SearchHistory,
+
     private var clickListener: TrackClickListener
 ) : RecyclerView.Adapter<TrackViewHolder>() {
+
+    var trackList = ArrayList<Track>()
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false)
         return TrackViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(trackList[position])
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             val clickedTrack = trackList[position]
-            historyManager.saveTrackToHistory(clickedTrack)
-            clickListener.onTrackClicked(clickedTrack)
+            if(clickDebounce()) {
+                clickListener.onTrackClicked(clickedTrack)
+            }
 
         }
+    }
+    private fun clickDebounce() : Boolean {
+        val  current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     override fun getItemCount(): Int {
@@ -35,6 +49,10 @@ class TrackAdapter(
         this.trackList.clear()
         this.trackList.addAll(trackList)
         notifyDataSetChanged()
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
 

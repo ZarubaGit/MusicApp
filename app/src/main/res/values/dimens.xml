@@ -9,8 +9,8 @@
     <dimen name="text_size_setting">16sp</dimen>
     <dimen name="frame_setting_height">64dp</dimen>
     <dimen name="icon_onMain_Activity">8dp</dimen>
-    <dimen name="textForArtistName">11sp</dimen>
-    <dimen name="imageSize">45dp</dimen>
+    <dimen name="textForArtistName">12sp</dimen>
+    <dimen name="imageSize">46dp</dimen>
     <dimen name="searchBarMargin">56dp</dimen>
     <dimen name="forToolBarLeftSpace">12dp</dimen>
     <dimen name="sizeForTextSearchTitle">19sp</dimen>
@@ -18,4 +18,8 @@
     <dimen name="dimen51">51sp</dimen>
     <dimen name="dimen100">100sp</dimen>
     <dimen name="dimen13">13sp</dimen>
+    <dimen name="dimen12dp">12dp</dimen>
+    <dimen name="dimen24dp">24dp</dimen>
+    <dimen name="dimen32dp">32dp</dimen>
+    <dimen name="dimen8dp">8dp</dimen>
 </resources>
