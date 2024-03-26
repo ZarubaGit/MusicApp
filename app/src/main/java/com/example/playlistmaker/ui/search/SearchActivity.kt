@@ -26,7 +26,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchNewBinding
     private lateinit var previousRequest: String
     private val simpleTextWatcher: TextWatcher? = null
-    private val viewModel: SearchViewModel by viewModel()
+    private val viewModel: SearchViewModel by viewModel()//внедрение зависимостей с помощью DI и Koin
     private lateinit var searchResultsAdapter: TrackAdapter
 
     @SuppressLint("MissingInflatedId")

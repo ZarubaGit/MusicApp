@@ -13,7 +13,7 @@ import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.ui.search.TrackState
 
 class SearchViewModel(private val trackInteractor: TrackInteractor, private val searchHistoryInteractor: SearchHistoryInteractor) : ViewModel() {
-
+    //внедрение зависимостей с помощью DI и Koin
     companion object {
 
         private const val SEARCH_DEBOUNCE_DELAY = 1000L

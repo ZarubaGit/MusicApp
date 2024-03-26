@@ -13,7 +13,7 @@ import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor) : ViewModel() {
+class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor) : ViewModel() {//внедрение зависимостей с помощью DI и Koin
 
     private val handler = Handler(Looper.getMainLooper())
 

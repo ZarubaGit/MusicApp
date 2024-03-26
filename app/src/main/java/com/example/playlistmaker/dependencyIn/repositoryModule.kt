@@ -11,6 +11,8 @@ import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.example.playlistmaker.domain.setting.SettingsRepository
 import org.koin.dsl.module
 
+//внедрение зависимостей с помощью DI и Koin
+
 val repositoryModule = module {
 
     factory<AudioPlayerInteractor> {(mediaPlayer: MediaPlayer) ->

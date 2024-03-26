@@ -4,7 +4,7 @@ import com.example.playlistmaker.domain.setting.SettingsRepository
 import com.example.playlistmaker.domain.setting.SettingsInteractor
 import com.example.playlistmaker.domain.setting.model.ThemeSettings
 
-class SettingsInteractorImpl(private val settingsRepository: SettingsRepository) : SettingsInteractor {
+class SettingsInteractorImpl(private val settingsRepository: SettingsRepository) : SettingsInteractor {//внедрение зависимостей с помощью DI и Koin
     override fun getThemeSettings(): ThemeSettings {
         return settingsRepository.getThemeSettings()
     }

@@ -9,7 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
-
+    //внедрение зависимостей с помощью DI и Koin
     override fun onCreate() {
         super.onCreate()
 

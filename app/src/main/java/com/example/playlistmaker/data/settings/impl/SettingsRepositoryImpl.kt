@@ -8,7 +8,7 @@ import com.example.playlistmaker.domain.setting.model.ThemeSettings
 
 class
 
-SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences): SettingsRepository {
+SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences): SettingsRepository {//внедрение зависимостей с помощью DI и Koin
 
     override fun getThemeSettings(): ThemeSettings {
         val theme = sharedPreferences.getInt(DARK_THEME_MODE, -1)
