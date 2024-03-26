@@ -12,6 +12,8 @@ import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
+//внедрение зависимостей с помощью DI и Koin
+
 val interactorModule = module {
 
 

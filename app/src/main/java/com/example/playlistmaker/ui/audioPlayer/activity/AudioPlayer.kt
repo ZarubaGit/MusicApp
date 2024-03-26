@@ -20,7 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayer : AppCompatActivity() {
 
-    private val viewModel: AudioPlayerViewModel by viewModel()
+    private val viewModel: AudioPlayerViewModel by viewModel()//внедрение зависимостей с помощью DI и Koin
     private lateinit var artworkImageView: ImageView
     private lateinit var binding: ActivityAudioPlayerBinding
     private val formatTime by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }

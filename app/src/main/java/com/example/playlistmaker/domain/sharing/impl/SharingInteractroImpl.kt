@@ -5,7 +5,7 @@ import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.domain.sharing.model.EmailData
 
-class SharingInteractorImpl(private val externalNavigator: ExternalNavigator) : SharingInteractor {
+class SharingInteractorImpl(private val externalNavigator: ExternalNavigator) : SharingInteractor {//внедрение зависимостей с помощью DI и Koin
     override fun shareApp(link: String, title: String) {
         externalNavigator.shareLink(url = link, title = title)
     }

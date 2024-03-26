@@ -4,7 +4,7 @@ import com.example.playlistmaker.domain.Resource
 import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.api.TrackRepository
 
-class TrackInteractorImpl(private val repository: TrackRepository): TrackInteractor {
+class TrackInteractorImpl(private val repository: TrackRepository): TrackInteractor {//внедрение зависимостей с помощью DI и Koin
 
     private val executor = java.util.concurrent.Executors.newCachedThreadPool()
     override fun search(expression: String, consumer: TrackInteractor.TrackConsumer) {

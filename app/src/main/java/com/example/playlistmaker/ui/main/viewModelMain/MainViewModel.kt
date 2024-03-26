@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.setting.SettingsInteractor
 
-class MainViewModel(private val settingsInteractor: SettingsInteractor): ViewModel() {
+class MainViewModel(private val settingsInteractor: SettingsInteractor): ViewModel() {//внедрение зависимостей с помощью DI и Koin
 
     fun setAppTheme() {
         val systemTheme = settingsInteractor.getThemeSettings()

@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) : SearchHistoryRepository {
+class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) : SearchHistoryRepository {//внедрение зависимостей с помощью DI и Koin
 
 
     private var tracks = ArrayList<Track>()

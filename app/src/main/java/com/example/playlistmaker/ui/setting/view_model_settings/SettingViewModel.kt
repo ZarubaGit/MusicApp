@@ -14,6 +14,7 @@ import com.example.playlistmaker.util.Creator
 
 class SettingsViewModel(private val settingsInteractor: SettingsInteractor, private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
+    //внедрение зависимостей с помощью DI и Koin
 
 
 

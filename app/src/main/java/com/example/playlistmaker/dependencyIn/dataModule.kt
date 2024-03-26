@@ -15,6 +15,8 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
+//внедрение зависимостей с помощью DI и Koin
 private const val ITUNES_URL = "https://itunes.apple.com"
 
 val dataModule = module {

@@ -11,7 +11,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private  val  viewModel: SettingsViewModel by viewModel()
+    private  val  viewModel: SettingsViewModel by viewModel()//внедрение зависимостей с помощью DI и Koin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
