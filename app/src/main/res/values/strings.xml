@@ -32,9 +32,17 @@
     <string name="collection">Альбом</string>
     <string name="relise_year">Год</string>
     <string name="genreName">Жанр</string>
+    <string name="mediateka">Медиатека</string>
     <string name="country">Страна</string>
+    <string name="buttonNewPlayList">Новый плейлист</string>
     <string name="player_in_progress">Трек загружается</string>
+    <string name="emtyMediateka">Ваша медиатека пуста</string>
+    <string name="favoritsTrack">Избранные треки</string>
+    <string name="playLists">Плейлисты</string>
+    <string name="emtyPlayList">Вы не создали ни одного плейлиста</string>
     <string name="timebar_start">00:00</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
