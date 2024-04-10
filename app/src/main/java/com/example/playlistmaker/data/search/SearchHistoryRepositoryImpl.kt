@@ -50,7 +50,6 @@ class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferenc
     }
 
     companion object {
-        const val PREF_NAME = "com.example.playlistmaker.data.dto.SearchHistory"
         const val KEY_HISTORY = "history"
         const val MAX_HISTORY_SIZE = 10
     }

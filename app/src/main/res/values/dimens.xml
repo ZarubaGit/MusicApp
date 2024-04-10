@@ -22,4 +22,5 @@
     <dimen name="dimen24dp">24dp</dimen>
     <dimen name="dimen32dp">32dp</dimen>
     <dimen name="dimen8dp">8dp</dimen>
+    <dimen name="dimen18sp">18sp</dimen>
 </resources>
