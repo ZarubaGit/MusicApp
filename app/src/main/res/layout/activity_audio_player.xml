@@ -20,14 +20,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ImageView
-        android:id="@+id/backInSearch"
-        style="@style/StrelochkaBack"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/light_mode" />
+    <Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:navigationIcon="@drawable/light_mode"
+        android:titleTextAppearance="@style/textMediatekaToolBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/artworkImageView"
@@ -41,7 +42,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/backInSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
     <TextView
         android:id="@+id/nameTrackTextView"

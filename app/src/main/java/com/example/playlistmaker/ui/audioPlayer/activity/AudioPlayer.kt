@@ -77,8 +77,8 @@ class AudioPlayer : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
-        binding.backInSearch.setOnClickListener {
-            finish()
+        binding.toolBar.setNavigationOnClickListener {
+            this.finish()
         }
     }
 

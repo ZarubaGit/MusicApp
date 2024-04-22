@@ -4,30 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.media.MediatekaActivity">
+    tools:context=".ui.media.MediatekaFragment">
 
-    <LinearLayout
-        android:id="@+id/toolBarMedia"
-        style="@style/ToolBarSetting"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="@string/mediateka"
+        android:titleTextAppearance="@style/textMediatekaToolBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/backInMain"
-            style="@style/StrelochkaBack"
-            app:srcCompat="@drawable/light_mode" />
-
-        <TextView
-            android:id="@+id/textView"
-            style="@style/TextFromToolBar"
-            android:layout_marginStart="@dimen/forToolBarLeftSpace"
-            android:text="@string/mediateka"
-            android:textSize="@dimen/text_size" />
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -36,7 +22,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolBarMedia"
+        app:layout_constraintTop_toBottomOf="@+id/toolBar"
         app:tabGravity="fill"
         app:tabIndicatorAnimationMode="elastic"
         app:tabIndicatorColor="?attr/colorOnPrimary"
@@ -50,8 +36,9 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/dimen12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabLayout" />

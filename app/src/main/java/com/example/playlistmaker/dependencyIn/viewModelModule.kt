@@ -1,7 +1,7 @@
 package com.example.playlistmaker.dependencyIn
 
 import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
-import com.example.playlistmaker.ui.main.viewModelMain.MainViewModel
+import com.example.playlistmaker.ui.main.viewModelMain.RootViewModel
 import com.example.playlistmaker.ui.media.favoriteSongFragmentViewModel.FavoriteSongsFragmentViewModel
 import com.example.playlistmaker.ui.media.playListFragmentViewModel.PlayListFragmentViewModel
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
@@ -25,7 +25,7 @@ val viewModelModule = module {
     }
 
     viewModel{
-        MainViewModel(get())
+        RootViewModel(get())
     }
 
     viewModel{
