@@ -20,7 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayer : AppCompatActivity() {
 
-    private val viewModel: AudioPlayerViewModel by viewModel()//внедрение зависимостей с помощью DI и Koin
+    private val viewModel: AudioPlayerViewModel by viewModel()
     private lateinit var artworkImageView: ImageView
     private lateinit var binding: ActivityAudioPlayerBinding
     private val formatTime by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
@@ -88,7 +88,6 @@ class AudioPlayer : AppCompatActivity() {
     }
 
     private fun render(state: PlayerState) {
-        if (::savedTimeTrack.isInitialized) {
             when (state) {
                 PlayerState.PLAYING -> {
                     binding.playButton.setImageResource(R.drawable.button_pause)
@@ -105,7 +104,6 @@ class AudioPlayer : AppCompatActivity() {
                     savedTimeTrack = getString(R.string.timebar_start)
                 }
             }
-        }
     }
 
 

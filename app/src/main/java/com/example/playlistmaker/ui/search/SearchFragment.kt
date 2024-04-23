@@ -13,10 +13,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchNewBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
+import com.example.playlistmaker.ui.media.FavoriteSongsFragment
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
+
 
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var binding: FragmentSearchNewBinding
@@ -135,7 +137,7 @@ class SearchFragment : Fragment() {
 
                 // открываем аудиоплеер
                 val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
-                displayIntent.putExtra("track", TrackMapper.map(track))
+                displayIntent.putExtra(TRACK, TrackMapper.map(track))
                 startActivity(displayIntent)
             }
         }
@@ -219,6 +221,7 @@ class SearchFragment : Fragment() {
     //константы
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
+        const val TRACK = "track"
     }
 }
 
