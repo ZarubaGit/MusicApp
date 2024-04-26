@@ -1,46 +1,50 @@
 package com.example.playlistmaker.ui.search
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.MotionEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchNewBinding
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
+import com.example.playlistmaker.ui.media.FavoriteSongsFragment
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
-import com.example.playlistmaker.databinding.ActivitySearchNewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
 
-    private var savedText: String? = null
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var binding: ActivitySearchNewBinding
+    private lateinit var binding: FragmentSearchNewBinding
     private lateinit var previousRequest: String
     private val simpleTextWatcher: TextWatcher? = null
-    private val viewModel: SearchViewModel by viewModel()//внедрение зависимостей с помощью DI и Koin
+    private val viewModel: SearchViewModel by viewModel()
     private lateinit var searchResultsAdapter: TrackAdapter
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchNewBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
 
-        viewModel.observeState().observe(this) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchNewBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        viewModel.observeHistoryState().observe(this ) {
+        viewModel.observeHistoryState().observe(viewLifecycleOwner) {
             showSearchHistory(it)
         }
 
@@ -63,7 +67,6 @@ class SearchActivity : AppCompatActivity() {
         // Установка обработчика для кнопки "Очистить поисковый запрос"
         binding.clearIcon.setOnClickListener {
             binding.inputEditText.setText("")
-            hideSoftKeyboard()
             binding.clearIcon.visibility = View.GONE
             binding.inputEditText.clearFocus()
             clearContent()
@@ -91,13 +94,6 @@ class SearchActivity : AppCompatActivity() {
         }
         simpleTextWatcher.let { binding.inputEditText.addTextChangedListener(it) }
 
-
-
-        // Обработка нажатия на поле ввода для отображения клавиатуры
-        binding.inputEditText.setOnClickListener {
-            showSoftKeyboard()
-        }
-
         //кнопка обновить запрос при отсутствии соединения
         binding.refreshButton.setOnClickListener {
             binding.inputEditText.setText(previousRequest)
@@ -120,52 +116,17 @@ class SearchActivity : AppCompatActivity() {
             binding.searchPrefs.visibility =
                 if (hasFocus && binding.inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
         }
-        // Обработка нажатия на кнопку "Назад"
-        binding.backInMain.setOnClickListener {
-            finish()
-        }
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         simpleTextWatcher?.let { binding.inputEditText.removeTextChangedListener(it) }
     }
 
     private fun clearContent() {
         trackAdapter.trackList.clear()
         trackAdapter.notifyDataSetChanged()
-    }
-
-
-    // Метод для отображения клавиатуры
-    private fun showSoftKeyboard() {
-        binding.inputEditText.requestFocus()
-        val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethod.showSoftInput(binding.inputEditText, InputMethodManager.SHOW_IMPLICIT)
-    }
-    //метод для скрытия клавиатуры
-    private fun hideSoftKeyboard() {
-        val inputMethod = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethod.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
-    }
-
-    //метод для сохранения текста при пересоздании активити
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(PRODUCT_AMOUNT, binding.inputEditText.text.toString())
-    }
-    //метод для сохранения текста при пересоздании активити
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedText = savedInstanceState.getString(PRODUCT_AMOUNT, "")
-        binding.inputEditText.setText(savedText)
-    }
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (currentFocus != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-        }
-        return super.dispatchTouchEvent(ev)
     }
 
     private fun setAdapterListener(): TrackClickListener {
@@ -175,8 +136,8 @@ class SearchActivity : AppCompatActivity() {
                 viewModel.onClick(track)
 
                 // открываем аудиоплеер
-                val displayIntent = Intent(this@SearchActivity, AudioPlayer::class.java)
-                displayIntent.putExtra("track", TrackMapper.map(track))
+                val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
+                displayIntent.putExtra(TRACK, TrackMapper.map(track))
                 startActivity(displayIntent)
             }
         }
@@ -260,5 +221,7 @@ class SearchActivity : AppCompatActivity() {
     //константы
     companion object {
         const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
+        const val TRACK = "track"
     }
 }
+

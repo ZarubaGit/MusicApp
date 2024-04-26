@@ -13,7 +13,7 @@ import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor) : ViewModel() {//внедрение зависимостей с помощью DI и Koin
+class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -37,8 +37,8 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
     fun preparePlayer (previewUrl: String){
         audioPlayerInteractor.preparePlayer(previewUrl) {
             renderState(PlayerState.PREPARED)
-            updateTime()
         }
+        renderState(PlayerState.PREPARED)
     }
 
     private fun startPlayer(){
@@ -57,7 +57,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
         if(audioPlayerInteractor.getCurrentState() == State.PLAYING) {
             pausePlayer()
         }
-        else{
+        else {
             handler.removeCallbacks(playerRunnable)
             startPlayer()
         }

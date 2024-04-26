@@ -25,13 +25,13 @@ class AudioPlayerInteractorImpl(
 
     override fun preparePlayer(url: String?, onCompletePlaying: () -> Unit) {
         if (state == State.DEFAULT) {
-            mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                state = State.PREPARED
-                onCompletePlaying()
-            }
+            setListenersPlayer({ state = State.PREPARED },
+                {
+                    state = State.PREPARED
+                    onCompletePlaying()
+                })
         }
     }
 
@@ -43,4 +43,18 @@ class AudioPlayerInteractorImpl(
     override fun getCurrentState() = state
 
     override fun getCurrentPosition(): Int = mediaPlayer.currentPosition
+
+    override fun setListenersPlayer(
+        onPrepared: () -> Unit,
+        onCompleteListener: () -> Unit
+    ) {
+
+        mediaPlayer.setOnPreparedListener {
+            onPrepared()
+        }
+
+        mediaPlayer.setOnCompletionListener {
+            onCompleteListener()
+        }
+    }
 }

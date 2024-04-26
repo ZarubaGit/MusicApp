@@ -12,4 +12,9 @@ interface AudioPlayerInteractor {
     fun getCurrentState(): State
     fun getCurrentPosition(): Int
 
+    fun setListenersPlayer(
+        onPrepared: () -> Unit,
+        onCompleteListener: () -> Unit
+    )
+
 }

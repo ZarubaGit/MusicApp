@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/StyleFromBackgroundSettingActivity">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/spaceFromStartFrameLayout"
+    tools:context=".ui.setting.fragment.SettingsFragment">
 
-
-    <LinearLayout style="@style/ToolBarSetting">
-
-
-        <ImageView
-
-            android:id="@+id/backInMain"
-            style="@style/StrelochkaBack"
-            app:srcCompat="@drawable/light_mode" />
-
-        <TextView
-            android:id="@+id/textView"
-            style="@style/TextFromToolBar"
-            android:text="@string/name_setting"
-            android:layout_marginStart="12dp"
-            android:textSize="@dimen/text_size"/>
-    </LinearLayout>
+    <Toolbar
+        android:id="@+id/toolBar"
+        android:layout_marginTop="-15dp"
+        android:layout_marginStart="-15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="@string/name_setting"
+        android:titleTextAppearance="@style/textMediatekaToolBar" />
 
     <FrameLayout
         style="@style/FrameForSettingActivity"

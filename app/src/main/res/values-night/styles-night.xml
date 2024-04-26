@@ -97,6 +97,17 @@
 
     </style>
 
+    <style name="BottomNavigation">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="backgroundTint">@null</item>
+        <item name="itemTextAppearanceInactive">@color/bottom_selector_color</item>
+        <item name="itemTextAppearanceActive">@color/bottom_selector_color</item>
+        <item name="itemIconTint">@color/bottom_selector_color</item>
+        <item name="itemTextColor">@color/bottom_selector_color</item>
+        <item name="enforceTextAppearance">true</item>
+        <item name="enforceMaterialTheme">true</item>
+    </style>
+
     <style name="StyleEditText">
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">36dp</item>
