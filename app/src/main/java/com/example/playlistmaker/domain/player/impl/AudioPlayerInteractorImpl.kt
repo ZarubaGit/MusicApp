@@ -54,6 +54,7 @@ class AudioPlayerInteractorImpl(
         }
 
         mediaPlayer.setOnCompletionListener {
+            mediaPlayer.seekTo(0)
             onCompleteListener()
         }
     }
