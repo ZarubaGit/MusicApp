@@ -17,7 +17,7 @@ class SearchViewModel(private val trackInteractor: TrackInteractor, private val 
 
     companion object {
 
-        private const val SEARCH_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     private var searchJob: Job? = null
