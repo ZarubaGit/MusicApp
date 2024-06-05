@@ -12,7 +12,6 @@ import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.utils.DpToPx
 import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
-import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -40,11 +39,10 @@ class AudioPlayer : AppCompatActivity() {
 
 
         viewModel.observeStateLiveData().observe(this) {
-            render(it)
-        }
-
-        viewModel.observeTimeLiveData().observe(this) {
-            savedTimeTrack = it
+            savedTimeTrack = it.progress
+            binding.playButton.isEnabled = it.isPlayButtonEnabled
+            binding.playButton.setImageResource(it.buttonResource)
+            binding.trackTime.text = it.progress
         }
 
 
@@ -86,26 +84,6 @@ class AudioPlayer : AppCompatActivity() {
         super.onPause()
         viewModel.pausePlayer()
     }
-
-    private fun render(state: PlayerState) {
-            when (state) {
-                PlayerState.PLAYING -> {
-                    binding.playButton.setImageResource(R.drawable.button_pause)
-                    binding.trackTime.text = savedTimeTrack
-                }
-
-                PlayerState.PAUSED -> {
-                    binding.playButton.setImageResource(R.drawable.button_play)
-                }
-
-                PlayerState.PREPARED, PlayerState.DEFAULT -> {
-                    binding.playButton.setImageResource(R.drawable.button_play)
-                    binding.trackTime.text = getString(R.string.timebar_start)
-                    savedTimeTrack = getString(R.string.timebar_start)
-                }
-            }
-    }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

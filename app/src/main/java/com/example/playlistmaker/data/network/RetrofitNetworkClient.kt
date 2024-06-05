@@ -6,12 +6,14 @@ import android.net.NetworkCapabilities
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.dto.Response
 import com.example.playlistmaker.data.dto.TrackSearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitNetworkClient(private val apiSong: ApiSong, private val context: Context ) : NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = -1  }
         }
@@ -19,10 +21,14 @@ class RetrofitNetworkClient(private val apiSong: ApiSong, private val context: C
             return Response().apply { resultCode = 400 }
         }
 
-        val response = apiSong.search(dto.text).execute()
-        val body = response.body() ?: Response()
-
-        return body.apply { resultCode = response.code() }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiSong.search(dto.text)
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable){
+                Response().apply { resultCode = 500 }
+            }
+        }
     }
 
     private fun isConnected(): Boolean {

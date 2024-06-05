@@ -9,23 +9,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchNewBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
-import com.example.playlistmaker.ui.media.FavoriteSongsFragment
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
 
-
-    private lateinit var trackAdapter: TrackAdapter
+    private var isClickAllowed = true
     private lateinit var binding: FragmentSearchNewBinding
     private lateinit var previousRequest: String
     private val simpleTextWatcher: TextWatcher? = null
     private val viewModel: SearchViewModel by viewModel()
-    private lateinit var searchResultsAdapter: TrackAdapter
+    private val searchResultsAdapter = TrackAdapter(object : TrackAdapter.Listener {
+        override fun onTrackClicked(track: Track) {
+            enterToPlayer(track)
+        }
+    })
+    private val trackAdapter = TrackAdapter(object : TrackAdapter.Listener {
+        override fun onTrackClicked(track: Track) {
+            enterToPlayer(track)
+        }
+    })
 
 
     override fun onCreateView(
@@ -44,12 +54,10 @@ class SearchFragment : Fragment() {
             render(it)
         }
 
+
         viewModel.observeHistoryState().observe(viewLifecycleOwner) {
             showSearchHistory(it)
         }
-
-        trackAdapter = TrackAdapter(setAdapterListener())
-        searchResultsAdapter = TrackAdapter(setAdapterListener())
 
         binding.recyclerTracks.adapter = trackAdapter
         binding.recyclerSearch.adapter = searchResultsAdapter
@@ -129,19 +137,17 @@ class SearchFragment : Fragment() {
         trackAdapter.notifyDataSetChanged()
     }
 
-    private fun setAdapterListener(): TrackClickListener {
-        return object : TrackClickListener {
-            override fun onTrackClicked(track: Track) {
-                // добавляем в историю поиска
-                viewModel.onClick(track)
-
-                // открываем аудиоплеер
-                val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
-                displayIntent.putExtra(TRACK, TrackMapper.map(track))
-                startActivity(displayIntent)
-            }
+    private fun enterToPlayer(track: Track) {
+        if (clickDebounce()) {
+            viewModel.onClick(track)
+            // открываем аудиоплеер
+            val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
+            displayIntent.putExtra(TRACK, TrackMapper.map(track))
+            startActivity(displayIntent)
         }
     }
+
+
 
     private fun render(state: TrackState) {
         when (state) {
@@ -216,11 +222,21 @@ class SearchFragment : Fragment() {
 
     }
 
-
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
 
     //константы
     companion object {
-        const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
+        private const val DEBOUNCE_DELAY = 500L
         const val TRACK = "track"
     }
 }
