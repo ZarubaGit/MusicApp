@@ -45,6 +45,17 @@ class AudioPlayer : AppCompatActivity() {
             binding.trackTime.text = it.progress
         }
 
+        viewModel.observeFavoriteState().observe(this) { isFavorite ->
+            if (isFavorite ) {
+                binding.likeButton.setImageResource(R.drawable.button_was_liked)
+            } else {
+                binding.likeButton.setImageResource(R.drawable.button_liked_track)
+            }
+            track.isFavorite = !isFavorite
+        }
+
+        if (track.isFavorite)binding.likeButton.setImageResource(R.drawable.button_was_liked)
+
 
         binding.minAndSecTrack.text = track.trackTimeMillis
         binding.trackTime.text = track.trackTimeMillis
@@ -77,6 +88,10 @@ class AudioPlayer : AppCompatActivity() {
 
         binding.toolBar.setNavigationOnClickListener {
             this.finish()
+        }
+
+        binding.likeButton.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
         }
     }
 
