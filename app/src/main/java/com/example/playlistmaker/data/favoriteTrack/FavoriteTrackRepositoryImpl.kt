@@ -28,4 +28,8 @@ class FavoriteTrackRepositoryImpl(private val appDataBase: AppDataBase,
         appDataBase.getFavoriteTrackDao().delete(favoriteTrackMapper.map(track))
     }
 
+    override suspend fun isFavorite(track: Track): Boolean {
+        return appDataBase.getFavoriteTrackDao().isFavorite(track.trackId) != null
+    }
+
 }

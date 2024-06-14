@@ -14,7 +14,7 @@
     <string name="details">Подробнее</string>
     <string name="search">Поиск</string>
     <string name="linkOnAndDevol">https://practicum.yandex.ru/profile/android-developer</string>
-    <string name="shareSub">Здесь будет ссылка на приложение, но не сейчас)))</string>
+    <string name="shareSub">https://github.com/ZarubaGit/PlaylistMaker</string>
     <string name="messageForEmail">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="messageForEmailDevolp">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="offerta">https://yandex.ru/legal/practicum_offer/</string>

@@ -16,6 +16,9 @@ interface FavoriteTrackDao {
     @Query("SELECT * FROM favorite_entity_track ORDER BY insertTimeStamp DESC")
     suspend fun getAll(): List<FavoriteTrackEntity>?
 
+    @Query("SELECT trackId FROM favorite_entity_track WHERE trackId = :trackId LIMIT 1")
+    suspend fun isFavorite(trackId: Int): Int?
+
     @Query("SELECT trackId FROM favorite_entity_track")
     suspend fun getId(): List<Int>?
 }

@@ -22,7 +22,6 @@ class AudioPlayer : AppCompatActivity() {
     private val viewModel: AudioPlayerViewModel by viewModel()
     private lateinit var artworkImageView: ImageView
     private lateinit var binding: ActivityAudioPlayerBinding
-    private val formatTime by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     private val formatYear by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
     private val convert = DpToPx()
     private lateinit var savedTimeTrack: String
@@ -46,15 +45,17 @@ class AudioPlayer : AppCompatActivity() {
         }
 
         viewModel.observeFavoriteState().observe(this) { isFavorite ->
-            if (isFavorite ) {
-                binding.likeButton.setImageResource(R.drawable.button_was_liked)
-            } else {
-                binding.likeButton.setImageResource(R.drawable.button_liked_track)
-            }
-            track.isFavorite = !isFavorite
+            updateFavoriteButton(isFavorite)
+            track.isFavorite = isFavorite
         }
 
-        if (track.isFavorite)binding.likeButton.setImageResource(R.drawable.button_was_liked)
+        viewModel.checkIfFavorite(track)
+
+        if (track.isFavorite) {
+            binding.likeButton.setImageResource(R.drawable.button_was_liked)
+        } else {
+            binding.likeButton.setImageResource(R.drawable.button_liked_track)
+        }
 
 
         binding.minAndSecTrack.text = track.trackTimeMillis
@@ -100,6 +101,13 @@ class AudioPlayer : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.likeButton.setImageResource(R.drawable.button_was_liked)
+        } else {
+            binding.likeButton.setImageResource(R.drawable.button_liked_track)
+        }
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putCharSequence(PLAY_TIME, binding.trackTime.text)

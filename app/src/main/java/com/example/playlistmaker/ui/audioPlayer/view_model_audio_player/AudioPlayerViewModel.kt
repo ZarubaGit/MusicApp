@@ -92,7 +92,15 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
             } else {
                 favoriteTrackInteractor.add(track)
             }
-            isFavourite.postValue(!track.isFavorite)
+            track.isFavorite = !track.isFavorite
+            isFavourite.postValue(track.isFavorite)
+        }
+    }
+
+    fun checkIfFavorite(track: Track) {
+        viewModelScope.launch {
+            val isFavorite = favoriteTrackInteractor.isFavorite(track)
+            isFavourite.postValue(isFavorite)
         }
     }
 
