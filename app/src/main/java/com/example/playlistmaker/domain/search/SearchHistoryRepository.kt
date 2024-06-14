@@ -5,6 +5,6 @@ import com.example.playlistmaker.domain.models.Track
 interface SearchHistoryRepository {
 
     fun addTrack(track: Track)
-    fun getFromHistory(): ArrayList<Track>
+    suspend fun getFromHistory(): ArrayList<Track>
     fun clearHistory()
 }

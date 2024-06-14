@@ -2,7 +2,9 @@ package com.example.playlistmaker.dependencyIn
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.example.playlistmaker.data.NetworkClient
+import com.example.playlistmaker.data.db.AppDataBase
 import com.example.playlistmaker.data.network.ApiSong
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
@@ -42,11 +44,15 @@ val dataModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(), get())
+        SearchHistoryRepositoryImpl(get(), get(), get ())
     }
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl(get())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDataBase::class.java, "playList.db").build()
     }
 
 }

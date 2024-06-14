@@ -8,6 +8,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/media"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -38,4 +39,16 @@
             app:layout_constraintTop_toBottomOf="@+id/emptyMediaFavorites" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen8dp"
+        android:layout_marginStart="@dimen/dimen13"
+        android:layout_marginEnd="@dimen/dimen13"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_track" />
 </FrameLayout>

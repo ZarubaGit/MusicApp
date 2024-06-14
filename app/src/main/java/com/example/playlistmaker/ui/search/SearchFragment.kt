@@ -59,6 +59,8 @@ class SearchFragment : Fragment() {
             showSearchHistory(it)
         }
 
+
+
         binding.recyclerTracks.adapter = trackAdapter
         binding.recyclerSearch.adapter = searchResultsAdapter
 
@@ -93,6 +95,8 @@ class SearchFragment : Fragment() {
                     binding.imageHolder.visibility = View.GONE
                     binding.searchPrefs.visibility = View.GONE
                     binding.clearIcon.visibility = View.VISIBLE
+                } else {
+                    binding.clearIcon.visibility = View.GONE
                 }
                 previousRequest = s?.toString() ?: ""
                 viewModel.searchDebounce(changedText = previousRequest)

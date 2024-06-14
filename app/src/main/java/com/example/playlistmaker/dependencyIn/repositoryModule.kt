@@ -2,9 +2,12 @@ package com.example.playlistmaker.dependencyIn
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.data.TrackRepositoryImpl
+import com.example.playlistmaker.data.favoriteTrack.FavoriteTrackRepositoryImpl
+import com.example.playlistmaker.data.mapper.FavoriteTrackMapper
 import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.domain.api.TrackRepository
+import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackRepository
 import com.example.playlistmaker.domain.player.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
@@ -20,15 +23,21 @@ val repositoryModule = module {
     }
 
     factory<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(), get())
+        SearchHistoryRepositoryImpl(get(), get(), get())
     }
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get())
+        TrackRepositoryImpl(get(), get())
     }
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(get())
     }
+
+    single<FavoriteTrackRepository> {
+        FavoriteTrackRepositoryImpl(get(), get())
+    }
+
+    factory { FavoriteTrackMapper() }
 
 }

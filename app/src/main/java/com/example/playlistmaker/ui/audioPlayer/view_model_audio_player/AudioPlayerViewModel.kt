@@ -8,7 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackInteractor
 import com.example.playlistmaker.domain.models.State
+import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.player.AudioPlayerInteractor
 import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import kotlinx.coroutines.Job
@@ -17,14 +19,18 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor) : ViewModel() {
+class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor,
+    private val favoriteTrackInteractor: FavoriteTrackInteractor) : ViewModel() {
 
     private var timerJob: Job? = null
 
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
     fun observeStateLiveData():LiveData<PlayerState> = playerState
 
-    fun preparePlayer (previewUrl: String){
+    private var isFavourite = MutableLiveData<Boolean>()
+    fun observeFavoriteState(): LiveData<Boolean> = isFavourite
+
+    fun preparePlayer (previewUrl: String?){
         audioPlayerInteractor.preparePlayer(previewUrl) {
             playerState.postValue(PlayerState.Prepared())
             timerJob?.cancel()
@@ -77,6 +83,25 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
     private fun getDateFormat(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault())
             .format(audioPlayerInteractor.getCurrentPosition()) ?: "00:00"
+    }
+
+    fun onFavoriteClicked(track: Track) {
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                favoriteTrackInteractor.delete(track)
+            } else {
+                favoriteTrackInteractor.add(track)
+            }
+            track.isFavorite = !track.isFavorite
+            isFavourite.postValue(track.isFavorite)
+        }
+    }
+
+    fun checkIfFavorite(track: Track) {
+        viewModelScope.launch {
+            val isFavorite = favoriteTrackInteractor.isFavorite(track)
+            isFavourite.postValue(isFavorite)
+        }
     }
 
     companion object{

@@ -36,7 +36,7 @@ class TrackAdapter(private val clickListener: Listener
         notifyDataSetChanged()
     }
 
-    interface Listener {
+    fun interface Listener {
         fun onTrackClicked(track: Track)
     }
 

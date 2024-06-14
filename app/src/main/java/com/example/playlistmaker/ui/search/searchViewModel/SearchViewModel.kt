@@ -71,7 +71,10 @@ searchJob?.cancel()
     }
 
     fun getSearchHistory() {
-        historyLiveData.postValue(searchHistoryInteractor.getFromHistory())
+        viewModelScope.launch {
+            val history = searchHistoryInteractor.getFromHistory()
+            historyLiveData.postValue(history)
+        }
     }
 
     fun clearHistory() {
