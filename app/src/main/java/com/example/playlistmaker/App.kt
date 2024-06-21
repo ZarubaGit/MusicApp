@@ -5,6 +5,7 @@ import com.example.playlistmaker.dependencyIn.dataModule
 import com.example.playlistmaker.dependencyIn.interactorModule
 import com.example.playlistmaker.dependencyIn.repositoryModule
 import com.example.playlistmaker.dependencyIn.viewModelModule
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -17,5 +18,7 @@ class App : Application() {
             androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
+
+        PermissionRequester.initialize(applicationContext)
     }
 }

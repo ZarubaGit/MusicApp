@@ -3,11 +3,13 @@ package com.example.playlistmaker.dependencyIn
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import com.example.playlistmaker.data.ImageStorage
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.db.AppDataBase
 import com.example.playlistmaker.data.network.ApiSong
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.data.storage.ImageStorageImpl
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import com.example.playlistmaker.domain.sharing.impl.ExternalNavigatorImpl
@@ -52,7 +54,13 @@ val dataModule = module {
     }
 
     single {
-        Room.databaseBuilder(androidContext(), AppDataBase::class.java, "playList.db").build()
+        Room.databaseBuilder(androidContext(), AppDataBase::class.java, "playList.db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    single<ImageStorage>{
+        ImageStorageImpl(get())
     }
 
 }

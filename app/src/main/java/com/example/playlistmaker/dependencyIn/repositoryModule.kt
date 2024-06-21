@@ -4,10 +4,13 @@ import android.media.MediaPlayer
 import com.example.playlistmaker.data.TrackRepositoryImpl
 import com.example.playlistmaker.data.favoriteTrack.FavoriteTrackRepositoryImpl
 import com.example.playlistmaker.data.mapper.FavoriteTrackMapper
+import com.example.playlistmaker.data.mapper.PlayListMapper
+import com.example.playlistmaker.data.playList.PlayListRepositoryImpl
 import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.domain.api.TrackRepository
 import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackRepository
+import com.example.playlistmaker.domain.playList.PlayListRepository
 import com.example.playlistmaker.domain.player.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
@@ -40,4 +43,9 @@ val repositoryModule = module {
 
     factory { FavoriteTrackMapper() }
 
+    factory { PlayListMapper() }
+
+    single<PlayListRepository> {
+        PlayListRepositoryImpl(get(), get(), get())
+    }
 }
