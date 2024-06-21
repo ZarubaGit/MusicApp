@@ -31,5 +31,9 @@
         <item name = "android:textColor">@color/YP_White</item>
     </style>
 
+    <style name="TextInputLayoutAppearance" parent="Widget.Design.TextInputLayout">
+        <item name="colorControlActivated">@color/YP_White</item>
+    </style>
+
 
 </resources>
