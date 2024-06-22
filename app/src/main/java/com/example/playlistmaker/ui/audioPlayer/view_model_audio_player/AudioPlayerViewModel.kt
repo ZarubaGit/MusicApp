@@ -9,18 +9,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackInteractor
+import com.example.playlistmaker.domain.models.PlayList
 import com.example.playlistmaker.domain.models.State
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.playList.PlayListInteractor
 import com.example.playlistmaker.domain.player.AudioPlayerInteractor
 import com.example.playlistmaker.ui.audioPlayer.PlayerState
+import com.example.playlistmaker.ui.media.playList.PlayListState
+import com.example.playlistmaker.ui.media.playList.PlayListTrackState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val favoriteTrackInteractor: FavoriteTrackInteractor) : ViewModel() {
+    private val favoriteTrackInteractor: FavoriteTrackInteractor,
+    private val playListInteractor: PlayListInteractor) : ViewModel() {
 
     private var timerJob: Job? = null
 
@@ -29,6 +36,12 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
 
     private var isFavourite = MutableLiveData<Boolean>()
     fun observeFavoriteState(): LiveData<Boolean> = isFavourite
+
+    private val playlistState = MutableLiveData<PlayListState>(PlayListState.Empty)
+    fun observePlaylistState(): LiveData<PlayListState> = playlistState
+
+    private val addedToPlaylistState = MutableLiveData<PlayListTrackState>()
+    fun observeAddedToPlaylistState(): LiveData<PlayListTrackState> = addedToPlaylistState
 
     fun preparePlayer (previewUrl: String?){
         audioPlayerInteractor.preparePlayer(previewUrl) {
@@ -102,6 +115,49 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
             val isFavorite = favoriteTrackInteractor.isFavorite(track)
             isFavourite.postValue(isFavorite)
         }
+    }
+    fun addTrackInPlaylist(playlist: PlayList, track: Track) {
+        if (playlist.tracks.isEmpty()) {
+            addTrackToPlaylist(playlist, track.trackId)
+            addedToPlaylistState.postValue(PlayListTrackState.Added(playlist.name))
+        }
+        else {
+            if (playlist.tracks.contains(track.trackId)) {
+                addedToPlaylistState.postValue(PlayListTrackState.Match(playlist.name))
+            }
+            else {
+                addTrackToPlaylist(playlist, track.trackId)
+                addedToPlaylistState.postValue(PlayListTrackState.Added(playlist.name))
+            }
+        }
+    }
+
+    private fun addTrackToPlaylist(playlist: PlayList, trackId: Int) {
+        playlist.tracks.add(trackId)
+        playlist.tracksCounter += 1
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                playListInteractor.update(playlist)
+            }
+        }
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playListInteractor.getAll().collect {
+                if (it.isEmpty()) {
+                    renderState(PlayListState.Empty)
+                }
+                else {
+                    renderState(PlayListState.Content(it))
+                }
+            }
+        }
+    }
+
+    private fun renderState(state: PlayListState) {
+        playlistState.postValue(state)
     }
 
     companion object{

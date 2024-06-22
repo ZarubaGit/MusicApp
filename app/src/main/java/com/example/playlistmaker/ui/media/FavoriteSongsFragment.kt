@@ -92,6 +92,9 @@ class FavoriteSongsFragment : Fragment() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
 
-        fun newInstance() = FavoriteSongsFragment()
+        fun newInstance(): FavoriteSongsFragment{
+            return FavoriteSongsFragment()
+        }
+
     }
 }

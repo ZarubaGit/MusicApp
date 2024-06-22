@@ -2,6 +2,7 @@ package com.example.playlistmaker.dependencyIn
 
 import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
 import com.example.playlistmaker.ui.main.viewModelMain.RootViewModel
+import com.example.playlistmaker.ui.media.addPlayList.AddPlayListViewModel
 import com.example.playlistmaker.ui.media.favoriteSongFragmentViewModel.FavoriteSongsFragmentViewModel
 import com.example.playlistmaker.ui.media.playListFragmentViewModel.PlayListFragmentViewModel
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
@@ -13,7 +14,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel {
-        AudioPlayerViewModel(get(), get())
+        AudioPlayerViewModel(get(), get(), get())
     }
 
     viewModel {
@@ -33,6 +34,10 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlayListFragmentViewModel()
+        PlayListFragmentViewModel(get())
+    }
+
+    viewModel {
+        AddPlayListViewModel(get())
     }
 }
