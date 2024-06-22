@@ -32,7 +32,12 @@
     </style>
 
     <style name="TextInputLayoutAppearance" parent="Widget.Design.TextInputLayout">
-        <item name="colorControlActivated">@color/YP_White</item>
+        <item name="colorControlActivated">@color/YP_Blue</item>
+    </style>
+
+    <style name="AlertDialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/YP_White</item>
+        <item name="android:textSize">@dimen/textForArtistName</item>
     </style>
 
 

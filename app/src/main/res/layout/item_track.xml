@@ -64,6 +64,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:text="@string/trackDuration"
             android:theme="@style/artistTextColor"
+            android:maxLines="1"
             android:textSize="@dimen/textForArtistName" />
     </LinearLayout>
 

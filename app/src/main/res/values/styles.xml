@@ -67,7 +67,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">?attr/colorOnPrimary</item>
-        <item name="boxStrokeColor">@color/tap_color_selector</item> <!-- Селектор для цвета рамки -->
+        <item name="boxStrokeColor">@color/tap_color_selector</item>
         <item name="hintTextColor">@color/tap_color_selector</item>
 
     </style>
@@ -93,15 +93,18 @@
     </style>
 
     <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="colorSurface">@color/YP_White</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogTitleText</item>
         <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialogBodyText</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AlertDialogButtonStyle</item>
     </style>
+
+
     <style name="MaterialAlertDialogTitleText" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
     <style name="MaterialAlertDialogBodyText" parent="@style/MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:singleLine">false</item>
         <item name="android:maxLines">5</item>
     </style>
