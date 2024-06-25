@@ -37,10 +37,10 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class AddPlayListFragment : Fragment() {
+open class AddPlayListFragment : Fragment() {
 
-    private lateinit var binding: FragmentAddPlayListBinding
-    private val viewModel: AddPlayListViewModel by viewModel()
+    open lateinit var binding: FragmentAddPlayListBinding
+    open val viewModel: AddPlayListViewModel by viewModel()
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
         if (it != null) {
@@ -61,7 +61,7 @@ class AddPlayListFragment : Fragment() {
 
     private val request = PermissionRequester.instance()
 
-    private var tempPlayList = PlayList(tracks = ArrayList())
+    open var tempPlayList = PlayList(tracks = ArrayList())
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
 

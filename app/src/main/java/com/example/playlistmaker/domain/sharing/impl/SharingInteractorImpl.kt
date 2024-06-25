@@ -5,9 +5,13 @@ import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.domain.sharing.model.EmailData
 
-class SharingInteractorImpl(private val externalNavigator: ExternalNavigator) : SharingInteractor {//внедрение зависимостей с помощью DI и Koin
+class SharingInteractorImpl(private val externalNavigator: ExternalNavigator) : SharingInteractor {
     override fun shareApp(link: String, title: String) {
         externalNavigator.shareLink(url = link, title = title)
+    }
+
+    override fun sharePlaylist(message: String) {
+        externalNavigator.sharePlaylist(message)
     }
 
     override fun openTerms(link: String) {
@@ -15,11 +19,13 @@ class SharingInteractorImpl(private val externalNavigator: ExternalNavigator) : 
     }
 
     override fun openSupport(email: String, subject: String, text: String) {
-        externalNavigator.openEmail(data = getSupportEmailData(
-            email = email,
-            subject = subject,
-            text = text
-        ))
+        externalNavigator.openEmail(
+            data = getSupportEmailData(
+                email = email,
+                subject = subject,
+                text = text
+            )
+        )
     }
 
     private fun getSupportEmailData(email: String, subject: String, text: String): EmailData {

@@ -63,7 +63,7 @@
         android:maxLines="1"
         android:text="@string/songName"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="@dimen/text_size"
+        android:textSize="@dimen/dimen22sp"
         app:layout_constraintBottom_toTopOf="@+id/artistNameTextView"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="@+id/leftBorder" />

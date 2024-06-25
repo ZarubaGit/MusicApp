@@ -1,41 +1,46 @@
-package com.example.playlistmaker.ui.audioPlayer.activity
-
+package com.example.playlistmaker.ui.audioPlayer
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.domain.models.PlayList
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.utils.DpToPx
-import com.example.playlistmaker.ui.audioPlayer.PlayListAdapter
 import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
 import com.example.playlistmaker.ui.media.addPlayList.AddPlayListFragment
 import com.example.playlistmaker.ui.media.playList.PlayListState
 import com.example.playlistmaker.ui.media.playList.PlayListTrackState
+import com.example.playlistmaker.util.Changer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AudioPlayer : AppCompatActivity() {
+
+class AudioPlayerFragment : Fragment() {
+
 
     private val viewModel: AudioPlayerViewModel by viewModel()
     private lateinit var artworkImageView: ImageView
-    private lateinit var binding: ActivityAudioPlayerBinding
-    private val formatYear by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
+    private lateinit var binding: FragmentAudioPlayerBinding
     private val convert = DpToPx()
     private lateinit var savedTimeTrack: String
     private lateinit var track: Track
@@ -46,24 +51,34 @@ class AudioPlayer : AppCompatActivity() {
 
     private var isPlaylistClickAllowed = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable(TRACK_INFO, Track::class.java)!!
+        } else {
+            arguments?.getParcelable(TRACK_INFO)!!
+        }
 
 
-        track = getSerializable("track", Track::class.java)
-
-
-        viewModel.observeStateLiveData().observe(this) {
+        viewModel.observeStateLiveData().observe(viewLifecycleOwner) {
             savedTimeTrack = it.progress
             binding.playButton.isEnabled = it.isPlayButtonEnabled
             binding.playButton.setImageResource(it.buttonResource)
             binding.trackTime.text = it.progress
         }
 
-        viewModel.observeFavoriteState().observe(this) { isFavorite ->
+        viewModel.observeFavoriteState().observe(viewLifecycleOwner) { isFavorite ->
             updateFavoriteButton(isFavorite)
             track.isFavorite = isFavorite
         }
@@ -76,10 +91,10 @@ class AudioPlayer : AppCompatActivity() {
             binding.likeButton.setImageResource(R.drawable.button_liked_track)
         }
 
-        viewModel.observePlaylistState().observe(this) {
+        viewModel.observePlaylistState().observe(viewLifecycleOwner) {
             renderPlaylists(it)
         }
-        binding.recyclerPlaylistsInPLayer.layoutManager = LinearLayoutManager(this)
+        binding.recyclerPlaylistsInPLayer.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPlaylistsInPLayer.adapter = playlistAdapter
 
         val bottomSheetContainer = binding.bottomSheetPlaylist
@@ -98,36 +113,33 @@ class AudioPlayer : AppCompatActivity() {
             }
         })
 
-        viewModel.observeAddedToPlaylistState().observe(this) { addedToPlaylist ->
+        viewModel.observeAddedToPlaylistState().observe(viewLifecycleOwner) { addedToPlaylist ->
             when(addedToPlaylist) {
                 is PlayListTrackState.Match -> renderToast(addedToPlaylist.playlistName, false)
                 is PlayListTrackState.Added -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     renderToast(addedToPlaylist.playlistName, true)
                 }
+                else -> Unit
             }
 
         }
 
 
-        binding.minAndSecTrack.text = track.trackTimeMillis
-        binding.trackTime.text = track.trackTimeMillis
-        artworkImageView = findViewById(R.id.artworkImageView)
+        binding.minAndSecTrack.text = Changer.convertMillisToMinutesAndSeconds(track.trackTimeMillis)
+        binding.trackTime.text = Changer.convertMillisToMinutesAndSeconds(track.trackTimeMillis)
+        artworkImageView = binding.artworkImageView
         binding.nameTrackTextView.text = track.trackName
         binding.artistNameTextView.text = track.artistName
         binding.nameOfAlbum.text = track.collectionName ?: ""
-        binding.yearRightSide.text = if (track.releaseDate != null) {
-            formatYear.parse(track.releaseDate)?.let { formatYear.format(it) }
-        } else {
-            ""
-        }
+        binding.yearRightSide.text = convertToYear(track.releaseDate)
         binding.primaryGenreName.text = track.primaryGenreName ?: ""
         binding.countryRightSide.text = track.country ?: ""
 
         Glide.with(this)
             .load(track.getCoverArtwork())
             .centerCrop()
-            .transform((RoundedCorners(convert.dpToPx(15f, this@AudioPlayer))))
+            .transform((RoundedCorners(resources.getDimensionPixelOffset(R.dimen.dimen8dp))))
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
             .into(this.artworkImageView)
@@ -140,8 +152,17 @@ class AudioPlayer : AppCompatActivity() {
         }
 
         binding.toolBar.setNavigationOnClickListener {
-            this.finish()
+            findNavController().popBackStack()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().popBackStack()
+                }
+            }
+        )
 
         binding.likeButton.setOnClickListener {
             viewModel.onFavoriteClicked(track)
@@ -155,13 +176,7 @@ class AudioPlayer : AppCompatActivity() {
         }
 
         binding.newPlayListButton.setOnClickListener {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(
-                R.id.playerFragmentContainer,
-                AddPlayListFragment.newInstance(true)
-            )
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_addPlayListFragment)
 
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.audioPlayerMainScreen.isVisible = false
@@ -178,14 +193,14 @@ class AudioPlayer : AppCompatActivity() {
         if (added) {
 
             Toast.makeText(
-                this,
+                requireContext(),
                 getString(R.string.playlist_track_added, playlistName),
                 Toast.LENGTH_SHORT
             ).show()
         }
         else {
             Toast.makeText(
-                this,
+                requireContext(),
                 getString(R.string.playlist_track_exists, playlistName),
                 Toast.LENGTH_SHORT
             ).show()
@@ -241,21 +256,20 @@ class AudioPlayer : AppCompatActivity() {
         outState.putCharSequence(PLAY_TIME, binding.trackTime.text)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedTimeTrack = savedInstanceState.getCharSequence(PLAY_TIME).toString()
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.pausePlayer()
     }
 
-    private fun <T : Serializable?> getSerializable(name: String, clazz: Class<T>): T {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            intent.getSerializableExtra(name, clazz)!!
-        else
-            intent.getSerializableExtra(name) as T
+    private fun convertToYear(releaseDate: String?): String? {
+        return Changer.convertToYear(releaseDate)
     }
+
 
     companion object {
         const val PLAY_TIME = "PLAY_TIME"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val TRACK_INFO = "track"
     }
+
 }

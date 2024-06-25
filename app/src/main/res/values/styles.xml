@@ -38,7 +38,7 @@
     <style name="textMediatekaToolBar">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:textSize">@dimen/dimen22sp</item>
     </style>
 
     <style name="ToolBarSetting">
@@ -122,7 +122,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/YP_Black</item>
-        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:textSize">@dimen/dimen22sp</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:textFontWeight">500</item>
@@ -219,6 +219,60 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="textPlaylist">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/dimen24dp</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <style name="PlaylistIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:tint">@color/YP_Black</item>
+        <item name="android:layout_marginTop">@dimen/dimen16dp</item>
+    </style>
+
+    <style name="BottomSheetLinearLayoutThemed" parent="BottomSheetLinearLayout">
+        <item name="android:paddingHorizontal">@dimen/dimen13</item>
+    </style>
+
+    <style name="BottomSheetLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/shape_bottom_sheet_color</item>
+        <item name="behavior_hideable">true</item>
+        <item name="layout_behavior">com.google.android.material.bottomsheet.BottomSheetBehavior</item>
+    </style>
+
+    <style name="BottomSheetHandle">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">@dimen/dimen8dp</item>
+        <item name="android:background">@drawable/shape_bottom_sheet_handler</item>
+    </style>
+
+    <style name="playlistMenuButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorOnSecondary</item>
+        <item name="android:gravity">fill</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:paddingHorizontal">@dimen/dimen16dp</item>
+        <item name="android:paddingVertical">@dimen/dimen24dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/dimen16sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
 </resources>

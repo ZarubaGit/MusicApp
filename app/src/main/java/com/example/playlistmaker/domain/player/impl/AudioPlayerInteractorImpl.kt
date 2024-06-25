@@ -19,8 +19,9 @@ class AudioPlayerInteractorImpl(
     }
 
     override fun pausePlayer() {
-        mediaPlayer.pause()
-        state = State.PAUSED
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
     }
 
     override fun preparePlayer(url: String?, onCompletePlaying: () -> Unit) {
@@ -54,7 +55,10 @@ class AudioPlayerInteractorImpl(
         }
 
         mediaPlayer.setOnCompletionListener {
-            mediaPlayer.seekTo(0)
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.pause()
+                mediaPlayer.seekTo(0)
+            }
             onCompleteListener()
         }
     }

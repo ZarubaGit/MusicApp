@@ -1,7 +1,6 @@
 package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.data.db.entity.FavoriteTrackEntity
-import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackInteractor
 import com.example.playlistmaker.domain.models.Track
 
 class FavoriteTrackMapper {

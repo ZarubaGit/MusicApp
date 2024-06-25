@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.models.PlayList
 import com.example.playlistmaker.domain.playList.PlayListInteractor
 
-class AddPlayListViewModel(private val playListInteractor: PlayListInteractor) : ViewModel() {
-    private val playList = PlayList(tracks = ArrayList())
+open class AddPlayListViewModel(private val playListInteractor: PlayListInteractor) : ViewModel() {
+    open var playList = PlayList(tracks = ArrayList())
     private val playListState = MutableLiveData<PlayList>()
 
     fun observerPlayListState(): LiveData<PlayList> = playListState

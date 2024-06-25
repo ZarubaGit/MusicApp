@@ -20,7 +20,7 @@ class PlayListMapper {
             description = playList.description,
             uri = playList.uri,
             tracks = tracks,
-            tracksCounter = playList.tracksCounter
+            trackTimerMillis = playList.tracksTimerMillis
         )
     }
 
@@ -31,7 +31,7 @@ class PlayListMapper {
             description = playList.description,
             uri = playList.uri,
             tracks = convertToGson(playList.tracks),
-            tracksCounter = playList.tracksCounter
+            tracksTimerMillis = playList.trackTimerMillis
 
         )
     }

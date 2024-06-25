@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_height">220dp</dimen>
-    <dimen name="text_size">22sp</dimen>
+    <dimen name="dimen22sp">22sp</dimen>
     <dimen name="betweenButton">16dp</dimen>
     <dimen name="buttonCorner">20dp</dimen>
     <dimen name="iconSize">24dp</dimen>
@@ -24,4 +24,5 @@
     <dimen name="dimen8dp">8dp</dimen>
     <dimen name="dimen18sp">18sp</dimen>
     <dimen name="dimen16dp">16dp</dimen>
+    <dimen name="dimen16sp">16sp</dimen>
 </resources>
