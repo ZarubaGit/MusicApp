@@ -97,6 +97,7 @@
         <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialogBodyText</item>
         <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
     </style>
 
 

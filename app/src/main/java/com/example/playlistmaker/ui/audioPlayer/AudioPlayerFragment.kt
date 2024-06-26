@@ -41,7 +41,6 @@ class AudioPlayerFragment : Fragment() {
     private val viewModel: AudioPlayerViewModel by viewModel()
     private lateinit var artworkImageView: ImageView
     private lateinit var binding: FragmentAudioPlayerBinding
-    private val convert = DpToPx()
     private lateinit var savedTimeTrack: String
     private lateinit var track: Track
 
@@ -91,6 +90,8 @@ class AudioPlayerFragment : Fragment() {
             binding.likeButton.setImageResource(R.drawable.button_liked_track)
         }
 
+
+
         viewModel.observePlaylistState().observe(viewLifecycleOwner) {
             renderPlaylists(it)
         }
@@ -132,7 +133,7 @@ class AudioPlayerFragment : Fragment() {
         binding.nameTrackTextView.text = track.trackName
         binding.artistNameTextView.text = track.artistName
         binding.nameOfAlbum.text = track.collectionName ?: ""
-        binding.yearRightSide.text = convertToYear(track.releaseDate)
+        binding.yearRightSide.text = convertToYear(track.releaseDate)?: ""
         binding.primaryGenreName.text = track.primaryGenreName ?: ""
         binding.countryRightSide.text = track.country ?: ""
 
@@ -145,7 +146,11 @@ class AudioPlayerFragment : Fragment() {
             .into(this.artworkImageView)
 
 
-        viewModel.preparePlayer(previewUrl = track.previewUrl)
+        if (track.previewUrl != null) {
+            viewModel.preparePlayer(previewUrl = track.previewUrl)
+        } else {
+            Toast.makeText(context, "Данные трека не прогрузились", Toast.LENGTH_SHORT).show()
+        }
 
         binding.playButton.setOnClickListener {
             viewModel.playbackControl()

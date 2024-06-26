@@ -42,6 +42,7 @@ class PlayListMapper {
     }
 
     private fun convertToGson(tracksId: ArrayList<Int>):String {
-        return gson.toJson(tracksId)
+        val itemType = object : TypeToken<ArrayList<Int>>() {}.type
+        return gson.toJson(tracksId, itemType)
     }
 }

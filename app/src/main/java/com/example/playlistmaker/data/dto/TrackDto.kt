@@ -8,11 +8,11 @@ data class TrackDto(
     val artistName: String,
     val trackTimeMillis: Int? = 0,
     val artworkUrl100: String,
-    val collectionName: String?,
-    val releaseDate: String?,
-    val primaryGenreName: String?,
-    val country: String?,
-    val previewUrl: String
+    val collectionName: String? = null,
+    val releaseDate: String? = null,
+    val primaryGenreName: String? = null,
+    val country: String? = null,
+    val previewUrl: String? = null
 ) : Serializable
 
 

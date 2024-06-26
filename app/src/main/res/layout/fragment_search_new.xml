@@ -43,6 +43,7 @@
         <EditText
             android:id="@+id/inputEditText"
             style="@style/StyleEditText"
+            android:theme="@style/TextInputLayoutAppearance"
             android:imeOptions="actionDone"
             android:singleLine="true" />
 

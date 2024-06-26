@@ -25,6 +25,10 @@ class AudioPlayerInteractorImpl(
     }
 
     override fun preparePlayer(url: String?, onCompletePlaying: () -> Unit) {
+        if (url == null) {
+            throw IllegalArgumentException("Данные трека не прогрузились")
+        }
+
         if (state == State.DEFAULT) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
