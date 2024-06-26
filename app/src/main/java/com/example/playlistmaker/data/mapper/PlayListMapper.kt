@@ -20,7 +20,7 @@ class PlayListMapper {
             description = playList.description,
             uri = playList.uri,
             tracks = tracks,
-            tracksCounter = playList.tracksCounter
+            trackTimerMillis = playList.tracksTimerMillis
         )
     }
 
@@ -31,7 +31,7 @@ class PlayListMapper {
             description = playList.description,
             uri = playList.uri,
             tracks = convertToGson(playList.tracks),
-            tracksCounter = playList.tracksCounter
+            tracksTimerMillis = playList.trackTimerMillis
 
         )
     }
@@ -42,6 +42,7 @@ class PlayListMapper {
     }
 
     private fun convertToGson(tracksId: ArrayList<Int>):String {
-        return gson.toJson(tracksId)
+        val itemType = object : TypeToken<ArrayList<Int>>() {}.type
+        return gson.toJson(tracksId, itemType)
     }
 }

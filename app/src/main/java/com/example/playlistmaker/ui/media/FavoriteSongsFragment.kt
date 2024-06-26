@@ -7,9 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
 import com.example.playlistmaker.ui.media.favoriteSongFragmentViewModel.FavoriteSongsFragmentViewModel
 import com.example.playlistmaker.ui.media.favoriteSongFragmentViewModel.FavoriteState
 import com.example.playlistmaker.ui.search.TrackAdapter
@@ -45,10 +46,11 @@ class FavoriteSongsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.getTracks()
+        isClickAllowed = true
     }
 
     private fun render(state: FavoriteState) {
-        when(state) {
+        when (state) {
             is FavoriteState.Empty -> showEmpty()
             is FavoriteState.Content -> showContent(state.track)
         }
@@ -71,9 +73,11 @@ class FavoriteSongsFragment : Fragment() {
 
     private fun switchToPlayer(track: Track) {
         if (clickDebounce()) {
-            val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
-            displayIntent.putExtra("track", track)
-            startActivity(displayIntent)
+            val bundle = Bundle()
+            bundle.putParcelable(TRACK_INFO, track)
+            findNavController().navigate(
+                R.id.actionGlobalPlayer,
+                bundle)
         }
     }
 
@@ -91,6 +95,7 @@ class FavoriteSongsFragment : Fragment() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val TRACK_INFO = "track"
 
         fun newInstance(): FavoriteSongsFragment{
             return FavoriteSongsFragment()

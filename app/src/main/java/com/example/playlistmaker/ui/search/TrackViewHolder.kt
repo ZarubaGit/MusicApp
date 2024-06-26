@@ -9,6 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.utils.DpToPx
+import com.example.playlistmaker.util.Changer
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,14 +23,14 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        trackTimeTextView.text = track.trackTimeMillis
+        trackTimeTextView.text = Changer.convertMillisToMinutesAndSeconds(track.trackTimeMillis)
 
 
         Glide.with(itemView)
             .load(track.artworkUrl100)
             .centerCrop()
             .transform((RoundedCorners(convert.dpToPx(10f, itemView.context))))
-            .placeholder(R.drawable.placeholder) // Заглушка, если нет интернета
+            .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
             .into(artworkImageView)
     }

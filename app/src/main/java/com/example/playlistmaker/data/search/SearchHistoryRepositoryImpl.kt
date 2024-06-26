@@ -8,9 +8,11 @@ import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences,
-                                  private val gson: Gson,
-    private val appDataBase: AppDataBase) : SearchHistoryRepository {//внедрение зависимостей с помощью DI и Koin
+class SearchHistoryRepositoryImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson,
+    private val appDataBase: AppDataBase
+) : SearchHistoryRepository {
 
 
     private var tracks = ArrayList<Track>()
@@ -51,11 +53,11 @@ class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferenc
 
     private fun getHistoryData(): ArrayList<Track> {
         val historyString = sharedPreferences.getString(KEY_HISTORY, null)
-        return if (historyString != null) {
-            gson.fromJson(historyString, object : TypeToken<MutableList<Track>>() {}.type)
-        } else {
-            return ArrayList()
+        if (historyString != null) {
+            return Gson().fromJson(historyString, object :
+                TypeToken<ArrayList<Track>>() {}.type)
         }
+        return ArrayList()
     }
 
     override fun clearHistory() {

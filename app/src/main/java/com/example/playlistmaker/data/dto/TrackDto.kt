@@ -6,15 +6,13 @@ data class TrackDto(
     val trackId: Int,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: Int,
+    val trackTimeMillis: Int? = 0,
     val artworkUrl100: String,
-    val collectionName: String?,
-    val releaseDate: String?,
-    val primaryGenreName: String?,
-    val country: String?,
-    val previewUrl: String
-) : Serializable {
+    val collectionName: String? = null,
+    val releaseDate: String? = null,
+    val primaryGenreName: String? = null,
+    val country: String? = null,
+    val previewUrl: String? = null
+) : Serializable
 
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
-}

@@ -1,7 +1,6 @@
 package com.example.playlistmaker.ui.audioPlayer.view_model_audio_player
 
 
-
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -10,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favoriteTrack.FavoriteTrackInteractor
 import com.example.playlistmaker.domain.models.PlayList
+import com.example.playlistmaker.domain.models.PlayListTrack
 import com.example.playlistmaker.domain.models.State
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.playList.PlayListInteractor
@@ -17,6 +17,7 @@ import com.example.playlistmaker.domain.player.AudioPlayerInteractor
 import com.example.playlistmaker.ui.audioPlayer.PlayerState
 import com.example.playlistmaker.ui.media.playList.PlayListState
 import com.example.playlistmaker.ui.media.playList.PlayListTrackState
+import com.example.playlistmaker.util.Changer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,14 +26,16 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInteractor,
+class AudioPlayerViewModel(
+    private val audioPlayerInteractor: AudioPlayerInteractor,
     private val favoriteTrackInteractor: FavoriteTrackInteractor,
-    private val playListInteractor: PlayListInteractor) : ViewModel() {
+    private val playListInteractor: PlayListInteractor
+) : ViewModel() {
 
     private var timerJob: Job? = null
 
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
-    fun observeStateLiveData():LiveData<PlayerState> = playerState
+    fun observeStateLiveData(): LiveData<PlayerState> = playerState
 
     private var isFavourite = MutableLiveData<Boolean>()
     fun observeFavoriteState(): LiveData<Boolean> = isFavourite
@@ -43,7 +46,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
     private val addedToPlaylistState = MutableLiveData<PlayListTrackState>()
     fun observeAddedToPlaylistState(): LiveData<PlayListTrackState> = addedToPlaylistState
 
-    fun preparePlayer (previewUrl: String?){
+    fun preparePlayer(previewUrl: String?) {
         audioPlayerInteractor.preparePlayer(previewUrl) {
             playerState.postValue(PlayerState.Prepared())
             timerJob?.cancel()
@@ -51,7 +54,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
         playerState.postValue(PlayerState.Prepared())
     }
 
-    private fun startPlayer(){
+    private fun startPlayer() {
         audioPlayerInteractor.startPlayer()
         playerState.postValue(PlayerState.Playing(getDateFormat()))
         startTimer()
@@ -63,7 +66,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
         timerJob?.cancel()
     }
 
-    private fun startTimer(){
+    private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (audioPlayerInteractor.getCurrentState() == State.PLAYING) {
                 delay(DELAY_UPDATE_TIME_MS)
@@ -73,11 +76,10 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
 
     }
 
-    fun playbackControl(){
-        if(audioPlayerInteractor.getCurrentState() == State.PLAYING) {
+    fun playbackControl() {
+        if (audioPlayerInteractor.getCurrentState() == State.PLAYING) {
             pausePlayer()
-        }
-        else {
+        } else {
             startPlayer()
         }
     }
@@ -94,8 +96,8 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
     }
 
     private fun getDateFormat(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault())
-            .format(audioPlayerInteractor.getCurrentPosition()) ?: "00:00"
+        return Changer.convertMillisToMinutesAndSeconds(audioPlayerInteractor.getCurrentPosition())
+            ?: "00:00"
     }
 
     fun onFavoriteClicked(track: Track) {
@@ -116,29 +118,47 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
             isFavourite.postValue(isFavorite)
         }
     }
+
     fun addTrackInPlaylist(playlist: PlayList, track: Track) {
         if (playlist.tracks.isEmpty()) {
-            addTrackToPlaylist(playlist, track.trackId)
+            addTrackToPlaylist(playlist, track)
             addedToPlaylistState.postValue(PlayListTrackState.Added(playlist.name))
-        }
-        else {
+        } else {
             if (playlist.tracks.contains(track.trackId)) {
                 addedToPlaylistState.postValue(PlayListTrackState.Match(playlist.name))
-            }
-            else {
-                addTrackToPlaylist(playlist, track.trackId)
+            } else {
+                addTrackToPlaylist(playlist, track)
                 addedToPlaylistState.postValue(PlayListTrackState.Added(playlist.name))
             }
         }
     }
 
-    private fun addTrackToPlaylist(playlist: PlayList, trackId: Int) {
-        playlist.tracks.add(trackId)
-        playlist.tracksCounter += 1
+    private fun addTrackToPlaylist(playlist: PlayList, track: Track) {
+        playlist.tracks.add(track.trackId)
+        playlist.trackTimerMillis += track.trackTimeMillis ?: 0
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 playListInteractor.update(playlist)
+            }
+        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val playlistTrack = PlayListTrack(
+                    id = null,
+                    playlistId = playlist.id!!,
+                    trackId = track.trackId,
+                    trackName = track.trackName,
+                    artistName = track.artistName,
+                    trackTimeMillis = track.trackTimeMillis,
+                    artworkUrl100 = track.artworkUrl100,
+                    collectionName = track.collectionName,
+                    releaseDate = track.releaseDate,
+                    primaryGenreName = track.primaryGenreName,
+                    country = track.country,
+                    previewUrl = track.previewUrl
+                )
+                playListInteractor.addPlaylistTracks(playlistTrack)
             }
         }
     }
@@ -148,8 +168,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
             playListInteractor.getAll().collect {
                 if (it.isEmpty()) {
                     renderState(PlayListState.Empty)
-                }
-                else {
+                } else {
                     renderState(PlayListState.Content(it))
                 }
             }
@@ -160,7 +179,7 @@ class AudioPlayerViewModel(private val audioPlayerInteractor: AudioPlayerInterac
         playlistState.postValue(state)
     }
 
-    companion object{
+    companion object {
         private const val DELAY_UPDATE_TIME_MS = 300L
 
     }

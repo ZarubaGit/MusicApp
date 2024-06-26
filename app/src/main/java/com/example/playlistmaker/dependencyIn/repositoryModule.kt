@@ -5,6 +5,8 @@ import com.example.playlistmaker.data.TrackRepositoryImpl
 import com.example.playlistmaker.data.favoriteTrack.FavoriteTrackRepositoryImpl
 import com.example.playlistmaker.data.mapper.FavoriteTrackMapper
 import com.example.playlistmaker.data.mapper.PlayListMapper
+import com.example.playlistmaker.data.mapper.PlayListTrackMapper
+import com.example.playlistmaker.data.mapper.TrackMapper
 import com.example.playlistmaker.data.playList.PlayListRepositoryImpl
 import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
@@ -44,8 +46,10 @@ val repositoryModule = module {
     factory { FavoriteTrackMapper() }
 
     factory { PlayListMapper() }
+    factory { PlayListTrackMapper() }
+    factory { TrackMapper }
 
     single<PlayListRepository> {
-        PlayListRepositoryImpl(get(), get(), get())
+        PlayListRepositoryImpl(get(), get(), get(), get(), get())
     }
 }

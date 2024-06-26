@@ -3,7 +3,9 @@ package com.example.playlistmaker.dependencyIn
 import com.example.playlistmaker.ui.audioPlayer.view_model_audio_player.AudioPlayerViewModel
 import com.example.playlistmaker.ui.main.viewModelMain.RootViewModel
 import com.example.playlistmaker.ui.media.addPlayList.AddPlayListViewModel
+import com.example.playlistmaker.ui.media.editPlayList.EditPlaylistFragmentViewModel
 import com.example.playlistmaker.ui.media.favoriteSongFragmentViewModel.FavoriteSongsFragmentViewModel
+import com.example.playlistmaker.ui.media.playListDetails.view.PlaylistDetailsFragmentViewModel
 import com.example.playlistmaker.ui.media.playListFragmentViewModel.PlayListFragmentViewModel
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
 import com.example.playlistmaker.ui.setting.view_model_settings.SettingsViewModel
@@ -39,5 +41,13 @@ val viewModelModule = module {
 
     viewModel {
         AddPlayListViewModel(get())
+    }
+
+    viewModel {
+        EditPlaylistFragmentViewModel(get())
+    }
+
+    viewModel {
+        PlaylistDetailsFragmentViewModel(get(), get())
     }
 }

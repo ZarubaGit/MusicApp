@@ -6,5 +6,5 @@ data class PlayList(
     var description: String? = null,
     var uri: String? = null,
     val tracks: ArrayList<Int>,
-    var tracksCounter: Int = 0
+    var trackTimerMillis: Int = 0
 )

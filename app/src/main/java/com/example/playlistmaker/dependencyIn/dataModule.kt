@@ -12,7 +12,7 @@ import com.example.playlistmaker.data.search.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.storage.ImageStorageImpl
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.example.playlistmaker.domain.sharing.ExternalNavigator
-import com.example.playlistmaker.domain.sharing.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module

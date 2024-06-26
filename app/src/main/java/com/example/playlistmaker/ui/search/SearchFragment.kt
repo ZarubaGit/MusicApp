@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchNewBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.audioPlayer.activity.AudioPlayer
 import com.example.playlistmaker.ui.search.searchViewModel.SearchViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,9 +43,10 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSearchNewBinding.inflate(inflater,container,false)
+        binding = FragmentSearchNewBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -131,6 +132,14 @@ class SearchFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (binding.inputEditText.text.isEmpty()) {
+            viewModel.getSearchHistory()
+        }
+        isClickAllowed = true
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         simpleTextWatcher?.let { binding.inputEditText.removeTextChangedListener(it) }
@@ -144,18 +153,17 @@ class SearchFragment : Fragment() {
     private fun enterToPlayer(track: Track) {
         if (clickDebounce()) {
             viewModel.onClick(track)
-            // открываем аудиоплеер
-            val displayIntent = Intent(requireContext(), AudioPlayer::class.java)
-            displayIntent.putExtra(TRACK, TrackMapper.map(track))
-            startActivity(displayIntent)
+            val bundle = Bundle()
+            bundle.putParcelable(TRACK_INFO, track)
+            findNavController().navigate(R.id.actionGlobalPlayer,
+                bundle)
         }
     }
 
 
-
     private fun render(state: TrackState) {
         when (state) {
-            is TrackState.Loading ->  showLoading()
+            is TrackState.Loading -> showLoading()
             is TrackState.Error -> showError()
             is TrackState.Empty -> showEmpty()
             is TrackState.Content -> showContent(state.tracks)
@@ -207,11 +215,10 @@ class SearchFragment : Fragment() {
         binding.searchPrefs.visibility = View.GONE
     }
 
-    private fun showSearchHistory(track: ArrayList<Track> ) {
+    private fun showSearchHistory(track: ArrayList<Track>) {
         if (track.isEmpty()) {
             binding.searchPrefs.visibility = View.GONE
-        }
-        else {
+        } else {
             searchResultsAdapter.trackList = track
             searchResultsAdapter.notifyDataSetChanged()
             binding.recyclerSearch.visibility = View.VISIBLE
@@ -238,10 +245,10 @@ class SearchFragment : Fragment() {
         return current
     }
 
-    //константы
     companion object {
         private const val DEBOUNCE_DELAY = 500L
-        const val TRACK = "track"
+        const val TRACK_INFO = "track"
+
     }
 }
 

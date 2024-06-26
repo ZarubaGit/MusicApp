@@ -19,11 +19,16 @@ class AudioPlayerInteractorImpl(
     }
 
     override fun pausePlayer() {
-        mediaPlayer.pause()
-        state = State.PAUSED
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
     }
 
     override fun preparePlayer(url: String?, onCompletePlaying: () -> Unit) {
+        if (url == null) {
+            throw IllegalArgumentException("Данные трека не прогрузились")
+        }
+
         if (state == State.DEFAULT) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
@@ -54,7 +59,10 @@ class AudioPlayerInteractorImpl(
         }
 
         mediaPlayer.setOnCompletionListener {
-            mediaPlayer.seekTo(0)
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.pause()
+                mediaPlayer.seekTo(0)
+            }
             onCompleteListener()
         }
     }
