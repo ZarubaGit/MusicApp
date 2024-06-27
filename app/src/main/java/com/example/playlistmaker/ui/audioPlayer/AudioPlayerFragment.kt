@@ -120,6 +120,7 @@ class AudioPlayerFragment : Fragment() {
                 is PlayListTrackState.Added -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     renderToast(addedToPlaylist.playlistName, true)
+                    binding.addToPlayListButton.setImageResource(R.drawable.button_added_in_playlist)
                 }
                 else -> Unit
             }

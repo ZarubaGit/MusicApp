@@ -21,6 +21,7 @@ class AudioPlayerInteractorImpl(
     override fun pausePlayer() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
+            state = State.PAUSED
         }
     }
 
