@@ -2,6 +2,8 @@
 
 Приложение "PlayList Maker", разработанное для создания и управления плейлистами на основе любимых песен, с использованием [API iTunes](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/Searching.html#//apple_ref/doc/uid/TP40017632-CH5-SW1). Это приложение предлагает пользователям удобный способ поиска, прослушивания и организации музыки, создавая уникальные плейлисты и наслаждаясь ими в любое время.
 
+## Просмотр визуального представления приложения [Figma - макет](https://www.figma.com/design/k9z167lAABCA7wt8gONM14/Playlist-Maker-(YP)?node-id=470-24126&t=mh3cQ3AYrVCI2Daz-0)
+
 ## Основные функции
 
 Приложение "PlayList Maker" предоставляет следующие ключевые функции:
